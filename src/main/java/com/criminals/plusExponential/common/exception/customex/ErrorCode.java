@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ErrorCode {
 
 
+
     ; //지우지 마셈
 
     private final String message;

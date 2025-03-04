@@ -1,5 +1,5 @@
 package com.criminals.plusExponential.infrastructure;
-import com.criminals.plusExponential.domain.embeddable.UnmatchedPath;
+import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +33,7 @@ public class KakaoMobilityClient {
                         "origin=%f,%f&destination=%f,%f" +
                         "&waypoints=&priority=RECOMMEND&car_fuel=GASOLINE&car_hipass=false" +
                         "&alternatives=false&road_details=false",
-                unmatchedPath.getInitPoint().getLng(), unmatchedPath.getInitPoint().getLat(), unmatchedPath.getDestinationPoint().getLng(), unmatchedPath.getDestinationPoint().getLat()
+                unmatchedPath.getInit().getLng(), unmatchedPath.getInit().getLat(), unmatchedPath.getDestination().getLng(), unmatchedPath.getDestination().getLat()
         );
 
 

@@ -1,5 +1,7 @@
-package com.criminals.plusExponential.domain.entity;
+package com.criminals.plusExponential.domain;
 
+import com.criminals.plusExponential.domain.entity.BaseTimeEntity;
+import com.criminals.plusExponential.domain.entity.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

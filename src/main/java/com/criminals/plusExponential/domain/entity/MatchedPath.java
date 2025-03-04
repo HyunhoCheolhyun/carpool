@@ -4,6 +4,8 @@ import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.List;
+
 @Entity
 @Getter
 public class MatchedPath {
@@ -44,6 +46,12 @@ public class MatchedPath {
 
     @Column
     private Boolean isReal;
+
+    @OneToMany(mappedBy = "matchedPath")
+    private List<User> users;
+
+    @OneToMany(mappedBy = "matchedPath")
+    private List<UnmatchedPath> unmatchedPaths;
 
 
 }

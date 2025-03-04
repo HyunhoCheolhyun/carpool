@@ -1,7 +1,5 @@
-package com.criminals.plusExponential.domain;
+package com.criminals.plusExponential.domain.entity;
 
-import com.criminals.plusExponential.domain.entity.BaseTimeEntity;
-import com.criminals.plusExponential.domain.entity.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -37,4 +35,11 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @NotBlank(message = "역할은 필수 항목입니다.")
     private Role role;
+
+    @OneToOne(mappedBy = "user")
+    private UnmatchedPath unmatchedPath;
+
+    @ManyToOne
+    @JoinColumn(name="matched_path_id")
+    private MatchedPath matchedPath;
 }

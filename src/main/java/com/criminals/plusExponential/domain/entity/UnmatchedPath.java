@@ -33,6 +33,15 @@ public class UnmatchedPath extends BaseTimeEntity {
     private long duration;
 
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "matched_path_id")
+    private MatchedPath matchedPath;
+
+
     public UnmatchedPath(Coordinate initPoint, Coordinate destinationPoint) {
         this.init = initPoint;
         this.destination = destinationPoint;

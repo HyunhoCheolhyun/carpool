@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.application.services;
+package com.criminals.plusExponential.application.services.user.passenger;
 
 import com.criminals.plusExponential.domain.embeddable.UnmatchedPath;
 

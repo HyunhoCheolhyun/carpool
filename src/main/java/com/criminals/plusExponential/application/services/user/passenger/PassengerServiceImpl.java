@@ -1,6 +1,7 @@
-package com.criminals.plusExponential.application.services;
+package com.criminals.plusExponential.application.services.user.passenger;
 
-import com.criminals.plusExponential.domain.MatchMaker;
+import com.criminals.plusExponential.application.services.user.UserService;
+import com.criminals.plusExponential.application.services.user.passenger.PassengerService;
 import com.criminals.plusExponential.domain.MatchingProxy;
 import com.criminals.plusExponential.domain.embeddable.UnmatchedPath;
 import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
@@ -10,19 +11,17 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class PassengerServiceImpl implements PassengerService {
+public class PassengerServiceImpl extends UserService implements PassengerService{
 
     private final UnmatchedPath unmatchedPath;
     private final KakaoMobilityClient kakaoMobilityClient;
     private final MatchingProxy matchingProxy;
-    private final UserRepository userRepository;
 
-
-    public PassengerServiceImpl(UnmatchedPath unmatchedPath, KakaoMobilityClient kakaoMobilityClient, MatchingProxy matchingProxy, UserRepository userRepository) {
+    public PassengerServiceImpl(UserRepository userRepository, UnmatchedPath unmatchedPath, KakaoMobilityClient kakaoMobilityClient, MatchingProxy matchingProxy) {
+        super(userRepository);
         this.unmatchedPath = unmatchedPath;
         this.kakaoMobilityClient = kakaoMobilityClient;
         this.matchingProxy = matchingProxy;
-        this.userRepository = userRepository;
     }
 
     @Override

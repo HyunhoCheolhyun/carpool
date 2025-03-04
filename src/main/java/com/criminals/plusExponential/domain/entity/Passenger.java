@@ -1,5 +1,6 @@
 package com.criminals.plusExponential.domain.entity;
 
+import com.criminals.plusExponential.domain.User;
 import com.criminals.plusExponential.domain.embeddable.UnmatchedPath;
 import jakarta.persistence.*;
 

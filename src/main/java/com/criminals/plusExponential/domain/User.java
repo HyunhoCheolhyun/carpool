@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.domain.entity;
+package com.criminals.plusExponential.domain;
 
 import com.criminals.plusExponential.domain.entity.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;

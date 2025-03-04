@@ -1,5 +1,6 @@
 package com.criminals.plusExponential.common.auth;
 
+
 import com.criminals.plusExponential.domain.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

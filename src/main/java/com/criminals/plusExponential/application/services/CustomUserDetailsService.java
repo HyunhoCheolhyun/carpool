@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.services;
+package com.criminals.plusExponential.application.services;
 
 import com.criminals.plusExponential.common.auth.CustomUserDetails;
 import com.criminals.plusExponential.domain.entity.User;

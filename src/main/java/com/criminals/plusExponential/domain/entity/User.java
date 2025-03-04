@@ -17,7 +17,7 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     @NotBlank
-    private String userName;
+    private String username;
 
 
     @Column(nullable = false, unique = true)

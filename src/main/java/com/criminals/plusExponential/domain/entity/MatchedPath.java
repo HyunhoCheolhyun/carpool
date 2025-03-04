@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class MatchedPath {
+public class MatchedPath extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package com.criminals.plusExponential.common.auth;
 
+import com.criminals.plusExponential.domain.Passenger;
 import com.criminals.plusExponential.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,8 +19,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 예를 들어, user.getRole()가 PASSENGER인 경우 "ROLE_PASSENGER"를 반환합니다.
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        if (user instanceof Passenger) {
+            return Collections.singleton(new SimpleGrantedAuthority("ROLE_PASSENGER"));
+        } else if (user instanceof Driver) {
+            return Collections.singleton(new SimpleGrantedAuthority("ROLE_DRIVER"));
+        }
+        return Collections.emptyList();
     }
 
 
@@ -30,8 +35,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
+
 
     @Override
     public boolean isAccountNonExpired() {

@@ -1,9 +1,11 @@
 package com.criminals.plusExponential.config;
 
+import com.criminals.plusExponential.domain.Passenger;
 import com.criminals.plusExponential.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -42,7 +44,9 @@ public class DefaultSecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers("/matching").hasRole("PASSENGER")
+                        .requestMatchers("/matching").access((authentication, object) ->
+                                new AuthorizationDecision(authentication.get().getPrincipal() instanceof Passenger)
+                                )
                         .anyRequest().authenticated()
                 )
 

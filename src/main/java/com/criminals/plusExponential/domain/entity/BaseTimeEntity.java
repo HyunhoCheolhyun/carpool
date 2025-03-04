@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.domain;
+package com.criminals.plusExponential.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

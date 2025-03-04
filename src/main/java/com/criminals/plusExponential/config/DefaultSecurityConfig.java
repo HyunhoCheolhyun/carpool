@@ -1,6 +1,6 @@
 package com.criminals.plusExponential.config;
 
-import com.criminals.plusExponential.domain.Passenger;
+import com.criminals.plusExponential.domain.entity.Passenger;
 import com.criminals.plusExponential.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

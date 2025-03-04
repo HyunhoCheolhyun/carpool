@@ -4,6 +4,6 @@ import com.criminals.plusExponential.domain.embeddable.UnmatchedPath;
 
 import java.util.Map;
 
-public interface UserService {
+public interface PassengerService {
     public Map<String, Object> getSummary(UnmatchedPath unmatchedPath);
 }

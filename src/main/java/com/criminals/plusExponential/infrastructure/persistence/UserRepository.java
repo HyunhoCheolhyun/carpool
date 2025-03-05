@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.repository;
+package com.criminals.plusExponential.infrastructure.persistence;
 
 import com.criminals.plusExponential.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
-package com.criminals.plusExponential.application.services.user;
+package com.criminals.plusExponential.application.user;
 
-import com.criminals.plusExponential.repository.UserRepository;
+import com.criminals.plusExponential.infrastructure.persistence.UserRepository;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass

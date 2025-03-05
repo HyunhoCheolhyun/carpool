@@ -1,7 +1,7 @@
 package com.criminals.plusExponential.config.security;
 
 
-import com.criminals.plusExponential.application.services.user.CustomUserDetailsService;
+import com.criminals.plusExponential.auth.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

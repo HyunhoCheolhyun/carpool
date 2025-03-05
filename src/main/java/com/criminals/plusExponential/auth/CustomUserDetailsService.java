@@ -1,9 +1,7 @@
-package com.criminals.plusExponential.application.services.user;
+package com.criminals.plusExponential.auth;
 
-import com.criminals.plusExponential.common.auth.CustomUserDetails;
 import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.repository.UserRepository;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

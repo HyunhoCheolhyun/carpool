@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.signup;
+package com.criminals.plusExponential.presentation;
 
 import com.criminals.plusExponential.domain.entity.Role;
 import com.criminals.plusExponential.domain.entity.User;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserSignupIntegrationTest {
+public class UserSignupTest {
 
 
     @Autowired

@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.config.security;
+package com.criminals.plusExponential.infrastructure.config.security;
 
 
 import com.criminals.plusExponential.application.auth.CustomUserDetailsService;
@@ -24,7 +24,7 @@ public class DefaultSecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -43,6 +43,8 @@ public class DefaultSecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/auth/joinProcPassenger", "/auth/join", "/css/**", "/js/**")
+                        .permitAll()
                         .requestMatchers("/matching").hasRole("PASSENGER")
                         .anyRequest().authenticated()
                 )

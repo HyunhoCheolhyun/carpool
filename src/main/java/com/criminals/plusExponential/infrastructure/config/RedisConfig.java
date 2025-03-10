@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.config;
+package com.criminals.plusExponential.infrastructure.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

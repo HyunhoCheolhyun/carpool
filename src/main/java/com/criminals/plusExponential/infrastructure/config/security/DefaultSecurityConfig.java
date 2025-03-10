@@ -41,14 +41,14 @@ public class DefaultSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/auth/joinProcPassenger", "/auth/join", "/css/**", "/js/**")
-                        .permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/matching").hasRole("PASSENGER")
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults());
+
 
         return http.build();
     }

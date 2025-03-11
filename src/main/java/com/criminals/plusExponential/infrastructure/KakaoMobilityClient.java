@@ -1,4 +1,7 @@
 package com.criminals.plusExponential.infrastructure;
+import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
+import com.criminals.plusExponential.common.exception.customex.ErrorCode;
+import com.criminals.plusExponential.common.exception.customex.TooCloseBetweenInitAndDestination;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -28,13 +31,13 @@ public class KakaoMobilityClient {
         this.restTemplate = builder.build();
     }
 
-    public Map<String, Object> getSummary(UnmatchedPath unmatchedPath) {
+    public Map<String, Object> getSummary(UnmatchedPathDto unmatchedPathDto) {
         String url = String.format(
                 "https://apis-navi.kakaomobility.com/v1/directions?" +
                         "origin=%f,%f&destination=%f,%f" +
                         "&waypoints=&priority=RECOMMEND&car_fuel=GASOLINE&car_hipass=false" +
                         "&alternatives=false&road_details=false",
-                unmatchedPath.getInit().getLng(), unmatchedPath.getInit().getLat(), unmatchedPath.getDestination().getLng(), unmatchedPath.getDestination().getLat()
+                unmatchedPathDto.getInitPoint().getLng(), unmatchedPathDto.getInitPoint().getLat(), unmatchedPathDto.getDestinationPoint().getLng(), unmatchedPathDto.getDestinationPoint().getLat()
         );
 
 
@@ -58,6 +61,10 @@ public class KakaoMobilityClient {
             if (routes.isArray() && routes.size() > 0) {
                 // routes 배열의 첫 번째 요소를 Map으로 변환
                 JsonNode firstRoute = routes.get(0);
+
+                if (firstRoute.has("result_code") && firstRoute.get("result_code").asInt() == 104) {
+                    throw new TooCloseBetweenInitAndDestination(ErrorCode.TooCloseBetweenInitAndDestination);
+                }
                 return mapper.convertValue(firstRoute, new TypeReference<Map<String, Object>>() {});
             } else {
                 throw new RuntimeException("No routes found in the response.");

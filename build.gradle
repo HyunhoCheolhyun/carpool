@@ -31,13 +31,11 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-<<<<<<< HEAD
+
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
-=======
+
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
 
-
->>>>>>> a4bcd49 (spring security를 사용한 사용자 인증)
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'

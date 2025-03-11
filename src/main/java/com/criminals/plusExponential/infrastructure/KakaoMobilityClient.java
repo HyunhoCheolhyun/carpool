@@ -1,4 +1,5 @@
 package com.criminals.plusExponential.infrastructure;
+import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -65,6 +66,30 @@ public class KakaoMobilityClient {
             throw new RuntimeException("Failed to fetch directions: " + e.getMessage(), e);
         }
     }
+
+    //외부 api와 통신이 잘 되는지 확인용
+    //확인 결과 잘 됨
+//    public String getSummaryTest(Double initLng, Double initLat, Double destinationLng, Double destinationLat) {
+//        String url = String.format(
+//                "https://apis-navi.kakaomobility.com/v1/directions?" +
+//                        "origin=%f,%f&destination=%f,%f" +
+//                        "&waypoints=&priority=RECOMMEND&car_fuel=GASOLINE&car_hipass=false" +
+//                        "&alternatives=false&road_details=false",
+//                initLng, initLat, destinationLng, destinationLat
+//        );
+//
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("Authorization", "KakaoAK " + restApiKey);
+//        HttpEntity<?> entity = new HttpEntity<>(headers);
+//
+//        try {
+//            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+//            return response.getBody();  // return raw JSON
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to fetch directions: " + e.getMessage(), e);
+//        }
+//    }
 
     }
 

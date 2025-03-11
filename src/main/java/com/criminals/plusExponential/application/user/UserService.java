@@ -29,6 +29,14 @@ public class UserService {
         userRepository.save(dto.toEntity());
     }
 
+    @Transactional
+    public void userJoinAsDriver(UserDto.Request dto) {
+        dto.setPassword(encoder.encode(dto.getPassword()));
+        dto.setRole(Role.DRIVER);
+
+        userRepository.save(dto.toEntity());
+    }
+
 
     public Map<String, String> validateHandling(Errors errors) {
 

@@ -5,12 +5,14 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class UnmatchedPath extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +42,9 @@ public class UnmatchedPath extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "matched_path_id")
     private MatchedPath matchedPath;
+
+
+
 
 
     public UnmatchedPath(Coordinate initPoint, Coordinate destinationPoint) {

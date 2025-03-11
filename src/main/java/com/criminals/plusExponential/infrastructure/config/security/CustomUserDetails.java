@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.application.auth;
+package com.criminals.plusExponential.infrastructure.config.security;
 
 import com.criminals.plusExponential.domain.entity.User;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,6 +1,7 @@
-package com.criminals.plusExponential.application.auth;
+package com.criminals.plusExponential.infrastructure.config.security;
 
 import com.criminals.plusExponential.domain.entity.User;
+import com.criminals.plusExponential.infrastructure.config.security.CustomUserDetails;
 import com.criminals.plusExponential.infrastructure.persistence.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,7 +19,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
 
 
 

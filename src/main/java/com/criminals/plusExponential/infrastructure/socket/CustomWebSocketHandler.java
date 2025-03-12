@@ -1,6 +1,4 @@
 package com.criminals.plusExponential.infrastructure.socket;
-
-import com.criminals.plusExponential.application.auth.CustomUserDetails;
 import com.criminals.plusExponential.infrastructure.redis.RedisSocketRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +19,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        log.info("userId: {}, socketId: {}", session.getId());
         // 인터셉터에서 저장한 userId 꺼내기
         Map<String, Object> attributes = session.getAttributes();
         if (attributes.containsKey("userId")) {

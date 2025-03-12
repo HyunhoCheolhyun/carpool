@@ -1,15 +1,15 @@
 package com.criminals.plusExponential.infrastructure.config.security;
 
 
-import com.criminals.plusExponential.application.auth.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -17,10 +17,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class DefaultSecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
 
-    public DefaultSecurityConfig(CustomUserDetailsService userDetailsService) {
+    public DefaultSecurityConfig(CustomUserDetailsService userDetailsService, CustomLoginSuccessHandler customLoginSuccessHandler) {
         this.userDetailsService = userDetailsService;
+        this.customLoginSuccessHandler = customLoginSuccessHandler;
     }
 
     @Bean
@@ -36,6 +38,11 @@ public class DefaultSecurityConfig {
         return authProvider;
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,14 +50,23 @@ public class DefaultSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/matching").hasRole("PASSENGER")
-                        .anyRequest().authenticated()
-//                                .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/auth/**").permitAll()
+//                        .requestMatchers("/matching").hasRole("PASSENGER")
+//                        .anyRequest().authenticated()
+                                .requestMatchers("/**").permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());
 
 
         return http.build();
+    }
+
+    @Bean
+    public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
+        customAuthenticationFilter.setFilterProcessesUrl("/auth/login");
+        customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler);
+        customAuthenticationFilter.afterPropertiesSet();
+        return customAuthenticationFilter;
     }
 }

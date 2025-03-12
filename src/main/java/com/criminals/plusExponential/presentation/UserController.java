@@ -30,7 +30,6 @@ public class UserController {
     }
 
 
-
     @PostMapping("/passenger")
     public ResponseEntity<?> joinProcPassenger(@Valid @RequestBody UserDto.Request dto, Errors errors) {
         if (errors.hasErrors()) {
@@ -42,5 +41,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 완료!");
     }
 
+    @PostMapping("/driver")
+    public ResponseEntity<?> joinProcDriver(@Valid @RequestBody UserDto.Request dto, Errors errors) {
+        if (errors.hasErrors()) {
+            Map<String, String> validatorResult = userService.validateHandling(errors);
+            return ResponseEntity.badRequest().body(validatorResult);
+        }
 
+        userService.userJoinAsDriver(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 완료!");
+    }
 }

@@ -14,6 +14,13 @@ public class MatchedPath extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Transient
+    User userA;
+
+    @Transient
+    User userB;
+
+
     @Embedded
     private Coordinate init;
 

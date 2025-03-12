@@ -2,6 +2,7 @@ package com.criminals.plusExponential.application.dto;
 
 import com.criminals.plusExponential.domain.entity.Role;
 import com.criminals.plusExponential.domain.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

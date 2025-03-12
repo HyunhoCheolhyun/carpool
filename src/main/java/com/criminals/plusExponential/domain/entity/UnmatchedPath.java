@@ -2,25 +2,25 @@ package com.criminals.plusExponential.domain.entity;
 
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class UnmatchedPath extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Embedded
-    private Coordinate init;
+    private Coordinate initPoint;
 
     @Embedded
-    private Coordinate destination;
+    private Coordinate destinationPoint;
 
 
     @Column
@@ -41,9 +41,4 @@ public class UnmatchedPath extends BaseTimeEntity {
     @JoinColumn(name = "matched_path_id")
     private MatchedPath matchedPath;
 
-
-    public UnmatchedPath(Coordinate initPoint, Coordinate destinationPoint) {
-        this.init = initPoint;
-        this.destination = destinationPoint;
-    }
 }

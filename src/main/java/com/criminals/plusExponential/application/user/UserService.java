@@ -2,6 +2,7 @@ package com.criminals.plusExponential.application.user;
 
 import com.criminals.plusExponential.application.dto.UserDto;
 import com.criminals.plusExponential.domain.entity.Role;
+import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.infrastructure.persistence.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +25,22 @@ public class UserService {
     public void userJoinAsPassenger(UserDto.Request dto) {
 
         dto.setPassword(encoder.encode(dto.getPassword()));
-        dto.setRole(Role.PASSENGER);
+        User user = dto.toEntity();
+        user.setRole(Role.PASSENGER);
 
-        userRepository.save(dto.toEntity());
+        userRepository.save(user);
+
     }
 
     @Transactional
     public void userJoinAsDriver(UserDto.Request dto) {
         dto.setPassword(encoder.encode(dto.getPassword()));
-        dto.setRole(Role.DRIVER);
 
-        userRepository.save(dto.toEntity());
+        User user = dto.toEntity();
+        user.setRole(Role.DRIVER);
+
+        userRepository.save(user);
+
     }
 
 

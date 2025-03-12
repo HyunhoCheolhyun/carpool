@@ -33,11 +33,11 @@ public class UnmatchedPath extends BaseTimeEntity {
     private long duration;
 
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matched_path_id")
     private MatchedPath matchedPath;
 

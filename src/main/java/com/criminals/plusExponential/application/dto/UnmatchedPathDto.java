@@ -25,6 +25,9 @@ public class UnmatchedPathDto {
 
     private long duration;
 
+    private User user;
+
+
 
     public UnmatchedPath toEntity() {
         UnmatchedPath unmatchedPath = UnmatchedPath.builder()
@@ -33,6 +36,7 @@ public class UnmatchedPathDto {
                 .fare(fare)
                 .distance(distance)
                 .duration(duration)
+                .user(user)
                 .build();
 
         return unmatchedPath;

@@ -2,8 +2,6 @@ package com.criminals.plusExponential.infrastructure;
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
 import com.criminals.plusExponential.common.exception.customex.TooCloseBetweenInitAndDestination;
-import com.criminals.plusExponential.domain.embeddable.Coordinate;
-import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +29,7 @@ public class KakaoMobilityClient {
         this.restTemplate = builder.build();
     }
 
-    public Map<String, Object> getSummary(UnmatchedPathDto unmatchedPathDto) {
+    public Map<String, Object> getResponse(UnmatchedPathDto unmatchedPathDto) {
         String url = String.format(
                 "https://apis-navi.kakaomobility.com/v1/directions?" +
                         "origin=%f,%f&destination=%f,%f" +

@@ -46,6 +46,7 @@ public class DefaultSecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/matching").hasRole("PASSENGER")
                         .anyRequest().authenticated()
+//                                .requestMatchers("/**").permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());
 

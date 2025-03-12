@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>택시 합승 시스템</title>
+    <link rel="stylesheet" href="/css/home.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+</head>
+<body>
+<script>
+    const socket = new SockJS('http://localhost:8080/ws-stomp');
+    socket.onopen = () => {
+        console.log('Connected');
+    };
+
+    socket.onmessage = (event) => {
+        console.log('Received message:', event.data);
+    };
+
+    socket.onerror = (event) => {
+        console.error('Error occurred:', event);
+    };
+
+    socket.onclose = () => {
+        console.log('Connection closed');
+    };
+</script>
+<div class="container">
+    <div class="left-panel">
+        <div class="tab-container">
+            <div class="tab active">고객</div>
+            <div class="tab">드라이버</div>
+        </div>
+        <div class="greeting">안녕하세요! 어디로 가시나요?</div>
+        <form class="form-group" th:action="@{/match}" method="post">
+            <input type="text" name="departure" placeholder="출발지를 입력하세요" required>
+            <input type="text" name="destination" placeholder="도착지 주소를 입력하세요" required>
+            <button type="submit">매칭하기</button>
+        </form>
+        <div class="location-list">
+            <!-- Thymeleaf 반복문으로 목록 생성 -->
+            <div class="location-item" th:each="location : ${locations}">
+                <div class="location-info">
+                    <div class="location-title" th:text="${location.name}">당동초등학교</div>
+                    <div class="location-address" th:text="${location.address}">경기 군포시 용호로 34</div>
+                    <div class="location-phone" th:text="${location.phone}">031-399-8052</div>
+                </div>
+                <button class="location-button">출발</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -26,12 +26,11 @@ public class RedisHandshakeInterceptor implements HandshakeInterceptor {
 
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
-            log.info("authentication:{}",principal);
             if (principal instanceof CustomUserDetails) {
                 // CutomWebSocketHabdler에서 꺼내쓰기 위해서 저장
                 CustomUserDetails userDetails = (CustomUserDetails) principal;
-                log.info("authentication:{}",userDetails.getUser().getId());
-                attributes.put("userId", userDetails.getUser().getId());
+                log.info("authentication:{}",userDetails.getUser());
+                attributes.put("user", userDetails.getUser());
             }
         }
         return true;

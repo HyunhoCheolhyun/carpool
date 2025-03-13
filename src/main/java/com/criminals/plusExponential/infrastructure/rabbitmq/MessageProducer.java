@@ -16,7 +16,7 @@ public class MessageProducer {
 
 
     public void sendMessage(String message) {
-        log.info("큐진입: {}", message);
+        log.info("메세지 삽입: {}", message);
         rabbitTemplate.convertAndSend(MATCHING_EXCHANGE, KEY, message);
     }
 

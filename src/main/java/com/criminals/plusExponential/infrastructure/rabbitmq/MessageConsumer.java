@@ -12,7 +12,7 @@ public class MessageConsumer {
 
     @RabbitListener(queues = "q.matching.work", containerFactory="rabbitListenerContainerFactory")
     public void receiveMessage(String message)  {
-        log.info("진입:{}", message);
+        log.info("메세지 도착:{}", message);
         try{
             testMessage(message);
         } catch (RuntimeException e) {
@@ -32,7 +32,6 @@ public class MessageConsumer {
 
     private void testMessage(String message)  {
         if (message.equals("error")) {
-            log.error("메세지 출력:{}", message);
             throw new RuntimeException("테스트에러");
         }
         log.info("메세지 출력:{}", message);

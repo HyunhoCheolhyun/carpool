@@ -1,5 +1,6 @@
 package com.criminals.plusExponential.infrastructure.config;
 import com.criminals.plusExponential.common.interceptor.RedisHandshakeInterceptor;
+import com.criminals.plusExponential.infrastructure.redis.RedisMatchingRepository;
 import com.criminals.plusExponential.infrastructure.redis.RedisSocketRepository;
 import com.criminals.plusExponential.infrastructure.socket.CustomWebSocketHandler;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +17,11 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final RedisSocketRepository redisSocketRepository;
+    private final RedisMatchingRepository redisMatchingRepository;
 
     @Bean
     public WebSocketHandler customWebSocketHandler() {
-        return new CustomWebSocketHandler(redisSocketRepository);
+        return new CustomWebSocketHandler(redisSocketRepository,redisMatchingRepository);
     }
 
     @Bean

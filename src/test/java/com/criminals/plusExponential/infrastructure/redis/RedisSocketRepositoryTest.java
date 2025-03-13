@@ -1,5 +1,6 @@
 package com.criminals.plusExponential.infrastructure.redis;
 
+import com.criminals.plusExponential.domain.entity.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class RedisSocketRepositoryTest {
 
         String socketId = "12345";
 
-        redisSocketRepository.setSocketId(userId, socketId);
+        redisSocketRepository.setSocketId(userId, socketId, Role.PASSENGER);
 
         String savedSocketId = redisSocketRepository.getSocketId(userId);
 
@@ -30,7 +31,7 @@ class RedisSocketRepositoryTest {
 
     @AfterEach
     void cleanUp(){
-        redisSocketRepository.deleteSocketId(userId);
+        redisSocketRepository.deleteSocketId(userId, Role.PASSENGER);
     }
 
 

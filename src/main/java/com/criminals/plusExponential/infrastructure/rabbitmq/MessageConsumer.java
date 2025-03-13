@@ -10,14 +10,20 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class MessageConsumer {
 
-    @RabbitListener(queues = "q.matching.work")
+    @RabbitListener(queues = "q.matching.work", containerFactory="rabbitListenerContainerFactory")
     public void receiveMessage(String message)  {
         log.info("진입:{}", message);
         try{
             testMessage(message);
         } catch (RuntimeException e) {
-            // 예외를 그냥 던지면 3번까지 재시도 됩니다.
-            // 재시도 하고싶지 않다면 AmqpRejectAndDontRequeueException(e);
+            /**
+             * 재시도하는 경우
+             * 1. 매칭중인 유저 아무도 없을때
+             * 2. 매칭된 상대를 뺏겼을 때
+             * 재시도 안하는 경우 ( 재시도 하고싶지 않다면 AmqpRejectAndDontRequeueException(e); )
+             * 1. 단순 런타임 에러
+             * 등등
+             */
             throw e;
         }
     }

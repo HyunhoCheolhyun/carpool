@@ -1,6 +1,4 @@
 package com.criminals.plusExponential.infrastructure.rabbitmq;
-
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -18,6 +16,7 @@ public class MessageProducer {
 
 
     public void sendMessage(String message) {
+        log.info("큐진입: {}", message);
         rabbitTemplate.convertAndSend(MATCHING_EXCHANGE, KEY, message);
     }
 

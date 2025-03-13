@@ -2,13 +2,11 @@ package com.criminals.plusExponential.presentation;
 
 import com.criminals.plusExponential.application.dto.UserDto;
 import com.criminals.plusExponential.application.user.UserService;
-import com.criminals.plusExponential.application.validator.CustomValidators;
+import com.criminals.plusExponential.application.validator.UserValidators;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    private final CustomValidators.EmailValidator emailValidator;
+    private final UserValidators.EmailValidator emailValidator;
 
     @InitBinder
     public void validatorBinder(WebDataBinder binder) {

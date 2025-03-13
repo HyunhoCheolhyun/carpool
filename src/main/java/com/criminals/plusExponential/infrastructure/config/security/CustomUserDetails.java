@@ -31,6 +31,7 @@ public class CustomUserDetails implements UserDetails {
         return Collections.singletonList(new SimpleGrantedAuthority(roleWithPrefix));
     }
 
+
     public Long getUserId() { return user.getId(); }
 
     @Override

@@ -1,10 +1,19 @@
 package com.criminals.plusExponential.application.user;
 
 import com.criminals.plusExponential.application.dto.UserDto;
+import com.criminals.plusExponential.application.unmatchedPath.UnmatchedPathService;
 import com.criminals.plusExponential.domain.entity.Role;
+import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
+import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.UserRepository;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -23,6 +32,11 @@ public class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UnmatchedPathRepository unmatchedPathRepository;
+
+
+
     @Test
     @Rollback(false)
     void userJoinAsPassenger() {
@@ -36,7 +50,7 @@ public class UserServiceTest {
 
         //given
         UserDto.Request dto = new UserDto.Request();
-        dto.setEmail("test@example.com");
+        dto.setEmail("test124@example.com");
         dto.setPassword("plainPassword123");
         dto.setUsername("홍길동");
 
@@ -69,9 +83,11 @@ public class UserServiceTest {
         //then
         User savedUser = userRepository.findByEmail("test123@example.com").orElse(null);
         assertThat(savedUser).isNotNull();
-        assertThat(savedUser.getRole()).isEqualTo(Role.PASSENGER);
+        assertThat(savedUser.getRole()).isEqualTo(Role.DRIVER);
 
         assertThat(savedUser.getPassword()).isNotEqualTo("plainPassword456");
 
     }
+
+
 }

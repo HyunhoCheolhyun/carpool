@@ -9,7 +9,7 @@ import org.springframework.validation.Errors;
 
 @RequiredArgsConstructor
 @Component
-public class CustomValidators {
+public class UserValidators {
 
     @RequiredArgsConstructor
     @Component

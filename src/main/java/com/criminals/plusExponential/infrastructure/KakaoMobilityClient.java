@@ -1,6 +1,7 @@
 package com.criminals.plusExponential.infrastructure;
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
+import com.criminals.plusExponential.common.exception.customex.LoadSearchFailException;
 import com.criminals.plusExponential.common.exception.customex.TooCloseBetweenInitAndDestination;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -63,6 +64,11 @@ public class KakaoMobilityClient {
                 if (firstRoute.has("result_code") && firstRoute.get("result_code").asInt() == 104) {
                     throw new TooCloseBetweenInitAndDestination(ErrorCode.TooCloseBetweenInitAndDestination);
                 }
+
+                if (firstRoute.has("result_code") && firstRoute.get("result_code").asInt() != 0) {
+                    throw new LoadSearchFailException(ErrorCode.LoadSearchFail);
+                }
+
                 return mapper.convertValue(firstRoute, new TypeReference<Map<String, Object>>() {});
             } else {
                 throw new RuntimeException("No routes found in the response.");

@@ -6,7 +6,7 @@ import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 @Slf4j
 public class MessageConsumer {
 

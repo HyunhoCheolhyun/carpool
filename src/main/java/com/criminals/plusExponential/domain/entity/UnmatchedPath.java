@@ -30,10 +30,10 @@ public class UnmatchedPath extends BaseTimeEntity {
     private int fare;
 
     @Column
-    private long distance;
+    private int distance;
 
     @Column
-    private long duration;
+    private int duration;
 
 
     @OneToOne(fetch = FetchType.LAZY)

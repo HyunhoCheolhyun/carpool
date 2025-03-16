@@ -3,6 +3,7 @@ import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
 import com.criminals.plusExponential.common.exception.customex.LoadSearchFailException;
 import com.criminals.plusExponential.common.exception.customex.TooCloseBetweenInitAndDestination;
+import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,13 +31,13 @@ public class KakaoMobilityClient {
         this.restTemplate = builder.build();
     }
 
-    public Map<String, Object> getResponse(UnmatchedPathDto unmatchedPathDto) {
+    public Map<String, Object> getResponse(Coordinate point1, Coordinate point2) {
         String url = String.format(
                 "https://apis-navi.kakaomobility.com/v1/directions?" +
                         "origin=%f,%f&destination=%f,%f" +
                         "&waypoints=&priority=RECOMMEND&car_fuel=GASOLINE&car_hipass=false" +
                         "&alternatives=false&road_details=false",
-                unmatchedPathDto.getInitPoint().getLng(), unmatchedPathDto.getInitPoint().getLat(), unmatchedPathDto.getDestinationPoint().getLng(), unmatchedPathDto.getDestinationPoint().getLat()
+                point1.getLng(), point1.getLat(), point2.getLng(), point2.getLat()
         );
 
 

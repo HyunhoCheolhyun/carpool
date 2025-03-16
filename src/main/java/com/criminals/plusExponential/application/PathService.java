@@ -18,19 +18,40 @@ public class PathService {
     private final KakaoMobilityClient km;
     private final UnmatchedPathRepository unmatchedPathRepository;
 
+    public Map<String, Object> getSummary(Coordinate point1, Coordinate point2) {
+        Map<String, Object> routeData = km.getResponse(point1, point2);
+
+        return (Map<String, Object>) routeData.get("summary");
+    }
+
+    public int getFare(Coordinate point1, Coordinate point2) {
+        Map<String, Object> summary = getSummary(point1, point2);
+
+        Map<String, Integer> fare = (Map<String, Integer>) summary.get("fare");
+
+        return fare.get("taxi");
+    }
+
+    public int getDuration(Coordinate point1, Coordinate point2) {
+        Map<String, Object> summary = getSummary(point1, point2);
+
+        return (Integer) summary.get("duration");
+    }
+
+    public int getDistance(Coordinate point1, Coordinate point2) {
+        Map<String, Object> summary = getSummary(point1, point2);
+
+        return (Integer) summary.get("distance");
+    }
+
     
 
     public UnmatchedPath initFields(UnmatchedPathDto unmatchedPathDto, CustomUserDetails customUserDetails) {
 
-        Map<String, Object> routeData = km.getResponse(unmatchedPathDto);
 
-
-        Map<String, Object> summary = (Map<String, Object>) routeData.get("summary");
-        Map<String, Integer> fare = (Map<String, Integer>) summary.get("fare");
-
-        int taxiFare = fare.get("taxi");
-        int duration = (Integer) summary.get("duration");
-        int distance = (Integer) summary.get("distance");
+        int taxiFare = getFare(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
+        int duration = getDuration(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
+        int distance = getDistance(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
 
         User user = customUserDetails.getUser();
 

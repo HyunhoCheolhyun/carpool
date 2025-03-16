@@ -14,4 +14,6 @@ public class Coordinate {
 
     private Double lat;
     private Double lng;
+
+
 }

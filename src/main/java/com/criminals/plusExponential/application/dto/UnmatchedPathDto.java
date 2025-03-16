@@ -21,9 +21,9 @@ public class UnmatchedPathDto {
 
     private int fare;
 
-    private long distance;
+    private int distance;
 
-    private long duration;
+    private int duration;
 
     private User user;
 

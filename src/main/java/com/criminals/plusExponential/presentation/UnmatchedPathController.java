@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ExecutionException;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/unmatched-path")
@@ -33,7 +35,7 @@ public class UnmatchedPathController {
     }
 
     @PostMapping("/init-matching")
-    public ResponseEntity<?> sendMessageToMatchingProxy(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<?> sendMessageToMatchingProxy(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws ExecutionException, InterruptedException {
 
         User user = customUserDetails.getUser();
         unmatchedPathService.sendMessageToMatchingProxy(user);

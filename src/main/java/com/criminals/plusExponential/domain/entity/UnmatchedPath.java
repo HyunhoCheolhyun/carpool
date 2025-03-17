@@ -40,9 +40,6 @@ public class UnmatchedPath extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "matched_path_id")
-    private MatchedPath matchedPath;
 
     public UnmatchedPathDto toDto() {
         UnmatchedPathDto dto = new UnmatchedPathDto();

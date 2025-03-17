@@ -3,10 +3,10 @@ package com.criminals.plusExponential.application;
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -15,16 +15,26 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class MatchMakerService extends PathService{
-
     private final List<UnmatchedPathDto> waitingList = new ArrayList<>();
     private final Map<UnmatchedPathDto, UnmatchedPathDto> matchingTable = new HashMap<>();
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition partnerAvailable = lock.newCondition();
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
+    private final MatchedPathService matchedPathService;
 
-    public MatchMakerService(KakaoMobilityClient km, UnmatchedPathRepository unmatchedPathRepository) {
+    public MatchMakerService(KakaoMobilityClient km, UnmatchedPathRepository unmatchedPathRepository, MatchedPathService matchedPathService) {
         super(km, unmatchedPathRepository);
+        this.matchedPathService = matchedPathService;
     }
+
+    public void initMatching(UnmatchedPathDto newRequest) throws ExecutionException, InterruptedException {
+        Future<UnmatchedPathDto> unmatchedPathDtoFuture = requestMatchAsync(newRequest);
+
+        UnmatchedPathDto partner = unmatchedPathDtoFuture.get();
+        matchedPathService.createMatchedPath(newRequest, partner);
+    }
+
+
 
     public Future<UnmatchedPathDto> requestMatchAsync(UnmatchedPathDto newRequest) {
         lock.lock();
@@ -65,11 +75,11 @@ public class MatchMakerService extends PathService{
                 for (UnmatchedPathDto candidate : waitingListExceptMe) {
 
                     //출발지 끼리 이동시간
-                    int durationBetweenInits = getDuration(newRequest.getInitPoint(), candidate.getInitPoint());
+                    int durationBetweenInits = getSummary(newRequest.getInitPoint(), candidate.getInitPoint()).duration;
 
                     if (durationBetweenInits <= 600) {
 
-                        int durationBetweenDests = getDuration(newRequest.getDestinationPoint(), candidate.getDestinationPoint());
+                        int durationBetweenDests = getSummary(newRequest.getDestinationPoint(), candidate.getDestinationPoint()).duration;
 
                         if (durationBetweenDests < shortestDestTime) {
                             shortestDestTime = durationBetweenDests;

@@ -3,62 +3,44 @@ package com.criminals.plusExponential.domain.entity;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 public class MatchedPath extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Transient
-    User userA;
-
-    @Transient
-    User userB;
-
+    @Embedded
+    private Coordinate initPoint;
 
     @Embedded
-    private Coordinate init;
+    private Coordinate destinationPoint;
 
     @Embedded
-    private Coordinate destination;
+    private Coordinate firstWayPoint;
 
     @Embedded
-    private Coordinate firstWay;
+    private Coordinate SecondWayPoint;
 
-    @Embedded
-    private Coordinate SecondWay;
 
     @Column
-    private Integer firstFare;
+    private Integer fare;
 
     @Column
-    private Integer secondFare;
+    private Integer distance;
 
     @Column
-    private Integer firstDuration;
+    private Integer duration;
 
-    @Column
-    private Integer secondDuration;
-
-    @Column
-    private Integer totalFare;
-
-    @Column
-    private Integer totalDuration;
-
-    @Column
-    private Boolean isReal;
+    private int type;
 
     @OneToMany(mappedBy = "matchedPath")
-    private List<User> users;
-
-    @OneToMany(mappedBy = "matchedPath")
-    private List<UnmatchedPath> unmatchedPaths;
-
-
+    List<PrivateMatchedPath> privateMatchedPaths = new ArrayList<>();
 }

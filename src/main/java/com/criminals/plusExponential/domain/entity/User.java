@@ -39,7 +39,4 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user")
     private UnmatchedPath unmatchedPath;
 
-    @ManyToOne
-    @JoinColumn(name="matched_path_id")
-    private MatchedPath matchedPath;
 }

@@ -8,6 +8,7 @@ import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.config.security.CustomUserDetails;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.classfile.InnerClass;
 
 import java.util.Map;
 import java.util.Optional;
@@ -18,40 +19,63 @@ public class PathService {
     private final KakaoMobilityClient km;
     private final UnmatchedPathRepository unmatchedPathRepository;
 
-    public Map<String, Object> getSummary(Coordinate point1, Coordinate point2) {
+    public class Summary {
+        int fare;
+        int distance;
+        int duration;
+    }
+
+
+    public Summary getSummary(Coordinate point1, Coordinate point2) {
         Map<String, Object> routeData = km.getResponse(point1, point2);
 
-        return (Map<String, Object>) routeData.get("summary");
+        Map<String, Integer> fareMap = (Map<String, Integer>) routeData.get("fare");
+
+        Integer fare = fareMap.get("taxi");
+        Integer duration = (Integer) routeData.get("duration");
+        Integer distance = (Integer) routeData.get("distance");
+
+        Summary summary = new Summary();
+        summary.fare = fare;
+        summary.duration = duration;
+        summary.distance = distance;
+
+        return summary;
+
+
     }
 
-    public int getFare(Coordinate point1, Coordinate point2) {
-        Map<String, Object> summary = getSummary(point1, point2);
 
-        Map<String, Integer> fare = (Map<String, Integer>) summary.get("fare");
 
-        return fare.get("taxi");
+    public Summary getSummary(Coordinate point1, Coordinate point2, Coordinate point3, Coordinate point4) {
+        Map<String, Object> routeData = km.getResponse(point1, point2, point3, point4);
+
+        Map<String, Integer> fareMap = (Map<String, Integer>) routeData.get("fare");
+        Integer fare = fareMap.get("taxi");
+        Integer duration = (Integer) routeData.get("duration");
+        Integer distance = (Integer) routeData.get("distance");
+
+        Summary summary = new Summary();
+        summary.distance = distance;
+        summary.duration = duration;
+        summary.fare = fare;
+
+        return summary;
+
+
     }
 
-    public int getDuration(Coordinate point1, Coordinate point2) {
-        Map<String, Object> summary = getSummary(point1, point2);
 
-        return (Integer) summary.get("duration");
-    }
 
-    public int getDistance(Coordinate point1, Coordinate point2) {
-        Map<String, Object> summary = getSummary(point1, point2);
 
-        return (Integer) summary.get("distance");
-    }
-
-    
 
     public UnmatchedPath initFields(UnmatchedPathDto unmatchedPathDto, CustomUserDetails customUserDetails) {
 
+        Summary summary = getSummary(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
 
-        int taxiFare = getFare(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
-        int duration = getDuration(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
-        int distance = getDistance(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
+        int taxiFare = summary.fare;
+        int duration = summary.duration;
+        int distance = summary.distance;
 
         User user = customUserDetails.getUser();
 

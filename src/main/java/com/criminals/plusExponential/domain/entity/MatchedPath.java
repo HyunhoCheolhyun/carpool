@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class MatchedPath extends BaseTimeEntity {
+public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPath> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +43,9 @@ public class MatchedPath extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "matchedPath")
     List<PrivateMatchedPath> privateMatchedPaths = new ArrayList<>();
+
+    @Override
+    public int compareTo(MatchedPath o) {
+        return this.duration - o.duration;
+    }
 }

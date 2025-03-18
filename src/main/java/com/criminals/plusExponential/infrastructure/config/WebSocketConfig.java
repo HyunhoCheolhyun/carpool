@@ -1,38 +1,39 @@
 package com.criminals.plusExponential.infrastructure.config;
-import com.criminals.plusExponential.common.interceptor.RedisHandshakeInterceptor;
 import com.criminals.plusExponential.infrastructure.redis.RedisMatchingRepository;
 import com.criminals.plusExponential.infrastructure.redis.RedisSocketRepository;
-import com.criminals.plusExponential.infrastructure.socket.CustomWebSocketHandler;
+import com.criminals.plusExponential.infrastructure.socket.WebSocketEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.*;
 
 @Configuration
-@EnableWebSocket
+@EnableWebSocketMessageBroker  // @EnableWebSocket 대신 이것을 사용
 @RequiredArgsConstructor
-public class WebSocketConfig implements WebSocketConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {  // 하나의 인터페이스만 구현
 
     private final RedisSocketRepository redisSocketRepository;
     private final RedisMatchingRepository redisMatchingRepository;
 
     @Bean
-    public WebSocketHandler customWebSocketHandler() {
-        return new CustomWebSocketHandler(redisSocketRepository,redisMatchingRepository);
-    }
-
-    @Bean
-    public RedisHandshakeInterceptor redisHandshakeInterceptor() {
-        return new RedisHandshakeInterceptor();
+    public WebSocketEventListener webSocketEventListener() {
+        return new WebSocketEventListener(redisSocketRepository);
     }
 
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(customWebSocketHandler(), "/ws-stomp")
-                .addInterceptors(redisHandshakeInterceptor())
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.enableSimpleBroker("/topic", "/queue");
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.setUserDestinationPrefix("/user");
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws-stomp")
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
+
+
 }

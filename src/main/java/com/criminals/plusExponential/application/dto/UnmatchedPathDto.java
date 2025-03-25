@@ -1,6 +1,7 @@
 package com.criminals.plusExponential.application.dto;
 
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
 import jakarta.persistence.Column;
@@ -19,13 +20,15 @@ public class UnmatchedPathDto {
 
     private Coordinate destinationPoint;
 
-    private int fare;
+    private Fare fare;
 
     private int distance;
 
     private int duration;
 
     private User user;
+
+    private int toll;
 
 
 

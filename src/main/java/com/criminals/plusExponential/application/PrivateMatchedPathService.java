@@ -15,23 +15,7 @@ public class PrivateMatchedPathService {
         this.privateMatchedPathRepository = privateMatchedPathRepository;
     }
 
-    public void createPrivateMatchedPath(UnmatchedPathDto newRequest, UnmatchedPathDto partner, MatchedPath matchedPath) {
-        int type = matchedPath.getType();
+    public void createPrivateMatchedPath(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
 
-        PrivateMatchedPath a = new PrivateMatchedPath();
-        a.setUser(newRequest.getUser());
-        a.setMatchedPath(matchedPath);
-
-        PrivateMatchedPath b = new PrivateMatchedPath();
-        b.setUser(partner.getUser());
-        b.setMatchedPath(matchedPath);
-
-        switch (type) {
-            case 0:
-                a.setInitPoint(newRequest.getInitPoint());
-                a.setFirstWayPoint(partner.getInitPoint());
-                a.setDestinationPoint(newRequest.getDestinationPoint());
-
-        }
     }
 }

@@ -2,6 +2,7 @@ package com.criminals.plusExponential.domain.entity;
 
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.domain.embeddable.Fare;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.stereotype.Component;
@@ -20,14 +21,17 @@ public class UnmatchedPath extends BaseTimeEntity {
     private Long id;
 
     @Embedded
+    @Column
     private Coordinate initPoint;
 
     @Embedded
+    @Column
     private Coordinate destinationPoint;
 
 
+    @Embedded
     @Column
-    private int fare;
+    private Fare fare;
 
     @Column
     private int distance;
@@ -39,6 +43,8 @@ public class UnmatchedPath extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+
 
 
     public UnmatchedPathDto toDto() {

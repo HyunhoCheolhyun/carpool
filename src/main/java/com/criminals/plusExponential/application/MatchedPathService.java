@@ -1,19 +1,24 @@
 package com.criminals.plusExponential.application;
 
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
-import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.common.exception.customex.DecideOrderError;
+import com.criminals.plusExponential.common.exception.customex.ErrorCode;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
 import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.rmi.UnexpectedException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
+@Slf4j
 public class MatchedPathService extends PathService{
 
     private final MatchedPathRepository matchedPathRepository;
@@ -25,76 +30,79 @@ public class MatchedPathService extends PathService{
         this.privateMatchedPathService = privateMatchedPathService;
     }
 
-    private MatchedPath initFields(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+    private Map<Integer, Summary> decideOrder(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+        Map<Integer, Summary> retMap = new HashMap<>();
 
-        List<MatchedPath> candidates = new ArrayList<>();
+        Summary summary0 = getSummary(newRequest.getInitPoint(), partner.getInitPoint(), newRequest.getDestinationPoint(), partner.getDestinationPoint());
+        Summary summary1 = getSummary(newRequest.getInitPoint(), partner.getInitPoint(), partner.getDestinationPoint(), newRequest.getDestinationPoint());
+        Summary summary2 = getSummary(partner.getInitPoint(), newRequest.getInitPoint(), partner.getDestinationPoint(), newRequest.getDestinationPoint());
+        Summary summary3 = getSummary(partner.getInitPoint(), newRequest.getInitPoint(), newRequest.getDestinationPoint(), partner.getDestinationPoint());
 
-        MatchedPath matchedPath0 = new MatchedPath();
-        MatchedPath matchedPath1 = new MatchedPath();
-        MatchedPath matchedPath2 = new MatchedPath();
-        MatchedPath matchedPath3 = new MatchedPath();
+        retMap.put(0, summary0);
+        retMap.put(1, summary1);
+        retMap.put(2, summary2);
+        retMap.put(3, summary3);
 
-        matchedPath0.setType(0);
-        matchedPath0.setInitPoint(newRequest.getInitPoint());
-        matchedPath0.setFirstWayPoint(partner.getInitPoint());
-        matchedPath0.setSecondWayPoint(newRequest.getDestinationPoint());
-        matchedPath0.setDestinationPoint(partner.getDestinationPoint());
+        int min = Integer.MAX_VALUE;
 
-        Summary summary = getSummary(matchedPath0.getInitPoint(), matchedPath0.getFirstWayPoint(), matchedPath0.getSecondWayPoint(), matchedPath0.getDestinationPoint());
-        matchedPath0.setFare(summary.fare);
-        matchedPath0.setDistance(summary.distance);
-        matchedPath0.setDuration(summary.duration);
+        for (int i = 0; i < 4; i++) {
 
+            Summary currentSummary = retMap.get(i);
+            int currentFareSum = currentSummary.fare.getTotal();
 
-        matchedPath1.setType(1);
-        matchedPath1.setInitPoint(newRequest.getInitPoint());
-        matchedPath1.setFirstWayPoint(partner.getInitPoint());
-        matchedPath1.setSecondWayPoint(partner.getDestinationPoint());
-        matchedPath1.setDestinationPoint(newRequest.getDestinationPoint());
+            if (currentFareSum < min) {
+                min = currentFareSum;
+                continue;
+            }
 
-        summary = getSummary(matchedPath1.getInitPoint(), matchedPath1.getFirstWayPoint(), matchedPath1.getSecondWayPoint(), matchedPath1.getDestinationPoint());
-        matchedPath1.setFare(summary.fare);
-        matchedPath1.setDistance(summary.distance);
-        matchedPath1.setDuration(summary.duration);
+            retMap.remove(i);
 
+        }
 
-        matchedPath2.setType(2);
-        matchedPath2.setInitPoint(partner.getInitPoint());
-        matchedPath2.setFirstWayPoint(newRequest.getInitPoint());
-        matchedPath2.setSecondWayPoint(partner.getDestinationPoint());
-        matchedPath2.setDestinationPoint(newRequest.getDestinationPoint());
+        return retMap;
 
-        summary = getSummary(matchedPath2.getInitPoint(), matchedPath2.getFirstWayPoint(), matchedPath2.getSecondWayPoint(), matchedPath2.getDestinationPoint());
-        matchedPath2.setFare(summary.fare);
-        matchedPath2.setDistance(summary.distance);
-        matchedPath2.setDuration(summary.duration);
+    }
 
-        matchedPath3.setType(3);
-        matchedPath3.setInitPoint(partner.getInitPoint());
-        matchedPath3.setFirstWayPoint(newRequest.getInitPoint());
-        matchedPath3.setSecondWayPoint(newRequest.getDestinationPoint());
-        matchedPath3.setDestinationPoint(partner.getDestinationPoint());
-
-        summary = getSummary(matchedPath3.getInitPoint(), matchedPath3.getFirstWayPoint(), matchedPath3.getSecondWayPoint(), matchedPath3.getDestinationPoint());
-        matchedPath3.setFare(summary.fare);
-        matchedPath3.setDistance(summary.distance);
-        matchedPath3.setDuration(summary.duration);
-
-        candidates.add(matchedPath0);
-        candidates.add(matchedPath1);
-        candidates.add(matchedPath2);
-        candidates.add(matchedPath3);
-
-        Collections.sort(candidates);
-
-        return candidates.get(0);
-
+    private void sendMessageToPrivateMatchedPath(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+        privateMatchedPathService.createPrivateMatchedPath(matchedPath, newRequest, partner);
     }
 
     @Transactional
     public void createMatchedPath(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
-        MatchedPath matchedPath = initFields(newRequest, partner);
-        matchedPathRepository.save(matchedPath);
-        privateMatchedPathService.createPrivateMatchedPath(newRequest, partner, matchedPath);
+
+        Map<Integer, Summary> typeMap = decideOrder(newRequest, partner);
+
+        try {
+            for (int i = 0; i < 4; i++) {
+
+                if (typeMap.containsKey(i)) {
+                    MatchedPath matchedPath = new MatchedPath(i, newRequest, partner);
+                    Summary summary = typeMap.get(i);
+                    matchedPath.setDuration(summary.duration);
+                    matchedPath.setDistance(summary.distance);
+                    matchedPath.setFare(summary.fare);
+
+                    matchedPathRepository.save(matchedPath);
+                    sendMessageToPrivateMatchedPath(matchedPath, newRequest, partner);
+                    return;
+
+                }
+
+            }
+
+            throw new DecideOrderError(ErrorCode.DecideOrderError);
+
+        } catch (DataAccessException e) {
+
+
+            log.error("DB 저장 중 예외 발생: {}", e.getMessage(), e);
+
+
+            throw e;
+        }
+
+
     }
+
+
 }

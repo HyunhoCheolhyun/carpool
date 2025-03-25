@@ -1,8 +1,11 @@
 package com.criminals.plusExponential.domain.entity;
 
+import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.domain.embeddable.Fare;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPath> {
 
     @Id
@@ -18,20 +22,25 @@ public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPat
     private Long id;
 
     @Embedded
+    @Column
     private Coordinate initPoint;
 
     @Embedded
+    @Column
     private Coordinate destinationPoint;
 
     @Embedded
+    @Column
     private Coordinate firstWayPoint;
 
     @Embedded
-    private Coordinate SecondWayPoint;
-
-
     @Column
-    private Integer fare;
+    private Coordinate secondWayPoint;
+
+    @Embedded
+    @Column
+    private Fare fare;
+
 
     @Column
     private Integer distance;
@@ -47,5 +56,42 @@ public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPat
     @Override
     public int compareTo(MatchedPath o) {
         return this.duration - o.duration;
+    }
+
+    public MatchedPath(int type, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+        this.type = type;
+
+        switch (type) {
+
+            case 0:
+                this.initPoint = newRequest.getInitPoint();
+                this.firstWayPoint = partner.getInitPoint();
+                this.secondWayPoint = newRequest.getDestinationPoint();
+                this.destinationPoint = partner.getDestinationPoint();
+                break;
+
+            case 1:
+                this.initPoint = newRequest.getInitPoint();
+                this.firstWayPoint = partner.getInitPoint();
+                this.secondWayPoint = partner.getDestinationPoint();
+                this.destinationPoint = newRequest.getDestinationPoint();
+                break;
+
+            case 2:
+                this.initPoint = partner.getInitPoint();
+                this.firstWayPoint = newRequest.getInitPoint();
+                this.secondWayPoint = partner.getDestinationPoint();
+                this.destinationPoint = newRequest.getDestinationPoint();
+                break;
+
+            case 3:
+                this.initPoint = partner.getInitPoint();
+                this.firstWayPoint = newRequest.getInitPoint();
+                this.secondWayPoint = newRequest.getDestinationPoint();
+                this.destinationPoint = partner.getDestinationPoint();
+                break;
+
+        }
+
     }
 }

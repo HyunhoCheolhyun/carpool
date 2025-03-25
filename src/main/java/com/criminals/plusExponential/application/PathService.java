@@ -2,6 +2,7 @@ package com.criminals.plusExponential.application;
 
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
@@ -20,9 +21,10 @@ public class PathService {
     private final UnmatchedPathRepository unmatchedPathRepository;
 
     public class Summary {
-        int fare;
+        Fare fare;
         int distance;
         int duration;
+
     }
 
 
@@ -31,15 +33,15 @@ public class PathService {
 
         Map<String, Integer> fareMap = (Map<String, Integer>) routeData.get("fare");
 
-        Integer fare = fareMap.get("taxi");
+        Integer taxi = fareMap.get("taxi");
+        Integer toll = fareMap.get("toll");
         Integer duration = (Integer) routeData.get("duration");
         Integer distance = (Integer) routeData.get("distance");
 
         Summary summary = new Summary();
-        summary.fare = fare;
+        summary.fare = new Fare(taxi, toll);
         summary.duration = duration;
         summary.distance = distance;
-
         return summary;
 
 
@@ -51,14 +53,16 @@ public class PathService {
         Map<String, Object> routeData = km.getResponse(point1, point2, point3, point4);
 
         Map<String, Integer> fareMap = (Map<String, Integer>) routeData.get("fare");
-        Integer fare = fareMap.get("taxi");
+        Integer taxi = fareMap.get("taxi");
+        Integer toll = fareMap.get("toll");
         Integer duration = (Integer) routeData.get("duration");
         Integer distance = (Integer) routeData.get("distance");
 
         Summary summary = new Summary();
         summary.distance = distance;
         summary.duration = duration;
-        summary.fare = fare;
+        summary.fare = new Fare(taxi, toll);
+
 
         return summary;
 
@@ -73,7 +77,7 @@ public class PathService {
 
         Summary summary = getSummary(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
 
-        int taxiFare = summary.fare;
+        Fare fare = summary.fare;
         int duration = summary.duration;
         int distance = summary.distance;
 
@@ -87,14 +91,14 @@ public class PathService {
 
             existing.setInitPoint(unmatchedPathDto.getInitPoint());
             existing.setDestinationPoint(unmatchedPathDto.getDestinationPoint());
-            existing.setFare(taxiFare);
+            existing.setFare(fare);
             existing.setDuration(duration);
             existing.setDistance(distance);
 
             return existing;
         }
 
-        unmatchedPathDto.setFare(taxiFare);
+        unmatchedPathDto.setFare(fare);
         unmatchedPathDto.setDistance(distance);
         unmatchedPathDto.setDuration(duration);
         unmatchedPathDto.setUser(user);

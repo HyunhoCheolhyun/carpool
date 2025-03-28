@@ -123,10 +123,10 @@ public class KakaoMobilityClient {
         // 기타 고정 파라미터
         requestBody.put("priority", "RECOMMEND");
         requestBody.put("car_fuel", "GASOLINE");
-        requestBody.put("car_hipass", false);
+        requestBody.put("car_hipass", true);
         requestBody.put("alternatives", false);
         requestBody.put("road_details", false);
-        requestBody.put("summary", false);
+        requestBody.put("summary", true);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 

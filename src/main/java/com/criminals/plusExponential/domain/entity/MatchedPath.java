@@ -94,4 +94,20 @@ public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPat
         }
 
     }
+
+    @Override
+    public String toString() {
+        return "MatchedPath{" +
+                "id=" + id +
+                ", initPoint=" + initPoint +
+                ", destinationPoint=" + destinationPoint +
+                ", firstWayPoint=" + firstWayPoint +
+                ", secondWayPoint=" + secondWayPoint +
+                ", fare=" + fare +
+                ", distance=" + distance +
+                ", duration=" + duration +
+                ", type=" + type +
+                ", privateMatchedPaths=" + privateMatchedPaths +
+                '}';
+    }
 }

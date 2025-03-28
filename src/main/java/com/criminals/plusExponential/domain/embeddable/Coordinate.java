@@ -15,5 +15,11 @@ public class Coordinate {
     private Double lat;
     private Double lng;
 
-
+    @Override
+    public String toString() {
+        return "Coordinate{" +
+                "lat=" + lat +
+                ", lng=" + lng +
+                '}';
+    }
 }

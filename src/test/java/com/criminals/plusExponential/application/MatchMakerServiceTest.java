@@ -59,6 +59,8 @@ class MatchMakerServiceTest {
 
     }
 
+
+
     @Test
     @DisplayName("waitingList에 본인 제외 아무도 없는경우")
     void findPartnerTest_무한루프O() throws ExecutionException, InterruptedException {

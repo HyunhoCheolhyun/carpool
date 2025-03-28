@@ -21,4 +21,13 @@ public class Fare {
         this.toll = toll;
         this.total = taxi + toll;
     }
+
+    @Override
+    public String toString() {
+        return "Fare{" +
+                "taxi=" + taxi +
+                ", toll=" + toll +
+                ", total=" + total +
+                '}';
+    }
 }

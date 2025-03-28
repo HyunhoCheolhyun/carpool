@@ -84,6 +84,9 @@ public class MatchedPathService extends PathService{
 
                     matchedPathRepository.save(matchedPath);
                     sendMessageToPrivateMatchedPath(matchedPath, newRequest, partner);
+
+                    //test
+                    System.out.println(matchedPath);
                     return;
 
                 }

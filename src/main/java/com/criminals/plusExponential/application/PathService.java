@@ -9,7 +9,7 @@ import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.config.security.CustomUserDetails;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.apache.bcel.classfile.InnerClass;
+
 
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +25,14 @@ public class PathService {
         int distance;
         int duration;
 
+        @Override
+        public String toString() {
+            return "Summary{" +
+                    "fare=" + fare +
+                    ", distance=" + distance +
+                    ", duration=" + duration +
+                    '}';
+        }
     }
 
 
@@ -50,22 +58,27 @@ public class PathService {
 
 
     public Summary getSummary(Coordinate point1, Coordinate point2, Coordinate point3, Coordinate point4) {
+
+
+
         Map<String, Object> routeData = km.getResponse(point1, point2, point3, point4);
 
-        Map<String, Integer> fareMap = (Map<String, Integer>) routeData.get("fare");
-        Integer taxi = fareMap.get("taxi");
-        Integer toll = fareMap.get("toll");
-        Integer duration = (Integer) routeData.get("duration");
-        Integer distance = (Integer) routeData.get("distance");
+        Map<String, Object> summary = (Map<String, Object>) routeData.get("summary");
 
-        Summary summary = new Summary();
-        summary.distance = distance;
-        summary.duration = duration;
-        summary.fare = new Fare(taxi, toll);
+        Integer distance = (Integer) summary.get("distance");
+        Integer duration = (Integer) summary.get("duration");
+        Map<String, Integer> fare = (Map<String, Integer>) summary.get("fare");
+        Integer taxi = fare.get("taxi");
+        Integer toll = fare.get("toll");
+
+        Summary retSummary = new Summary();
+
+        retSummary.distance = distance;
+        retSummary.duration = duration;
+        retSummary.fare = new Fare(taxi, toll);
 
 
-        return summary;
-
+        return retSummary;
 
     }
 

@@ -1,0 +1,103 @@
+/* 기본 스타일 초기화 */
+body, h1, h2, p, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 전체 페이지 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* 헤더 스타일 */
+header {
+    background-color: #0056b3;
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    position: fixed; /* 헤더를 화면 맨 위로 고정 */
+    top: 0; /* 상단에 위치 */
+    left: 0; /* 페이지 왼쪽에 맞춤 */
+    z-index: 1000; /* 다른 요소 위에 표시되도록 레이어 설정 */
+}
+
+header h1 {
+    font-size: 24px;
+}
+
+/* 메인 컨테이너 스타일 */
+main {
+    margin-top: 80px; /* 헤더 높이만큼 아래로 공간 추가 */
+    text-align: center;
+}
+
+.waiting-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.waiting-container h2 {
+    font-size: 20px;
+    color: #0056b3;
+}
+
+.waiting-container p {
+    font-size: 16px;
+}
+
+/* 로딩 스피너 스타일 */
+.spinner {
+    margin: 20px auto;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f4f4f4; /* 바깥 원 색상 */
+    border-top-color: #0056b3; /* 회전하는 색상 */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 버튼 스타일 */
+.cancel-button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.cancel-button:hover {
+    background-color: #004494; /* 버튼 호버 시 색상 변경 */
+}
+
+/* 푸터 스타일 */
+footer {
+    position: absolute;
+    bottom: 10px;
+}
+
+footer p {
+    font-size: 14px;
+}

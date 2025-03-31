@@ -8,6 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.4-next/lib/stomp.min.js"></script>
     <script type="text/javascript" th:src="@{/js/driver.js}" defer></script>
+    <script>
+        const REST_API_KEY = "[[${@environment.getProperty('REST_API_KEY')}]]";
+    </script>
 </head>
 <body>
 <header>
@@ -23,6 +26,21 @@
 
     <button class="cancel-button">대기 취소</button>
 </main>
+
+<div id="confirmationModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3>경로 정보를 확인하세요</h3>
+        <p id="modalInitPoint"></p>
+        <p id="modalDestinationPoint"></p>
+        <p id="modalFare"></p>
+        <p id="modalDistance"></p>
+        <p id="modalDuration"></p>
+        <div class="modal-buttons">
+            <button id="acceptButton">수락</button>
+            <button id="cancelButton">취소</button>
+        </div>
+    </div>
+</div>
 
 <footer>
     <p>&copy; 합승 시스템</p>

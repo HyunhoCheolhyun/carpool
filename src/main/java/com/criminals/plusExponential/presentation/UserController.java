@@ -3,6 +3,9 @@ package com.criminals.plusExponential.presentation;
 import com.criminals.plusExponential.application.dto.UserDto;
 import com.criminals.plusExponential.application.user.UserService;
 import com.criminals.plusExponential.application.validator.UserValidators;
+import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.domain.entity.MatchedPath;
+import com.criminals.plusExponential.infrastructure.socket.WebSocketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,8 @@ public class UserController {
     private final UserService userService;
 
     private final UserValidators.EmailValidator emailValidator;
+
+    private final WebSocketService webSocketService;
 
     @InitBinder
     public void validatorBinder(WebDataBinder binder) {
@@ -48,5 +53,13 @@ public class UserController {
 
         userService.userJoinAsDriver(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 완료!");
+    }
+    @GetMapping("/test")
+    public void test(){
+        MatchedPath matchedPath = new MatchedPath();
+        matchedPath.setInitPoint(new Coordinate(37.2094, 126.9769)); //수원대학교
+        matchedPath.setDestinationPoint(new Coordinate(37.3463, 126.9395)); //당동초등학교
+
+        webSocketService.sendAllDriver(matchedPath,5);
     }
 }

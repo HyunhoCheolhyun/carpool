@@ -10,7 +10,9 @@ import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -39,7 +41,7 @@ public class WebSocketService {
         );
     }
 
-    public void sendAllDriver(MatchedPath matchedPath){
+    public void sendAllDriver(MatchedPath matchedPath,int availableTime){
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         headerAccessor.setLeaveMutable(true);
         List<String> driverSocketIds = redisSocketRepository.getSocketIdsByRole(Role.DRIVER);
@@ -47,11 +49,15 @@ public class WebSocketService {
         for(String socketId : driverSocketIds){
             headerAccessor.setSessionId(socketId);
 
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("matchedPath", matchedPath);
+            payload.put("availableTime", availableTime);
+
             // 택시기사들 모두에게 소켓 전송
             messagingTemplate.convertAndSendToUser(
                     socketId,
-                    "/queue/request",
-                    matchedPath,
+                    "/queue/driver",
+                    payload,
                     headerAccessor.getMessageHeaders()
             );
         }

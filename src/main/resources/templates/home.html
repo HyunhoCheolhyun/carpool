@@ -7,30 +7,9 @@
     <link rel="stylesheet" href="/css/home.css">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.4-next/lib/stomp.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/home.js}" defer></script>
 </head>
 <body>
-<script>
-    const socket = new SockJS('/ws-stomp');
-    const stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
-        console.log('Connected: ' + frame);
-        // 이 시점에서 서버의 handleSessionConnected 메소드가 실행됨
-
-        stompClient.subscribe('/user/queue/messages', function(message) {
-            console.log('Received: ' + message.body);
-        });
-    });
-
-    // 에러 처리
-    socket.onerror = (event) => {
-        console.error('Error occurred:', event);
-    };
-
-    // 연결 종료 처리
-    socket.onclose = () => {
-        console.log('Connection closed');
-    };
-</script>
 <div class="container">
     <div class="left-panel">
         <div class="tab-container">

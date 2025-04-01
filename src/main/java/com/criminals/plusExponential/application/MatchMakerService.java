@@ -1,7 +1,7 @@
 package com.criminals.plusExponential.application;
 
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
-import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
+import com.criminals.plusExponential.infrastructure.kakao.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import org.springframework.stereotype.Service;
 

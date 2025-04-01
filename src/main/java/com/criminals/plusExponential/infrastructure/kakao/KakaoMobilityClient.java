@@ -1,5 +1,4 @@
-package com.criminals.plusExponential.infrastructure;
-import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
+package com.criminals.plusExponential.infrastructure.kakao;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
 import com.criminals.plusExponential.common.exception.customex.LoadSearchFailException;
 import com.criminals.plusExponential.common.exception.customex.TooCloseBetweenInitAndDestination;

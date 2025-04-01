@@ -4,16 +4,14 @@ import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.common.exception.customex.DecideOrderError;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
-import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
+import com.criminals.plusExponential.infrastructure.kakao.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.rmi.UnexpectedException;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -5,7 +5,7 @@ import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
-import com.criminals.plusExponential.infrastructure.KakaoMobilityClient;
+import com.criminals.plusExponential.infrastructure.kakao.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.config.security.CustomUserDetails;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import lombok.RequiredArgsConstructor;

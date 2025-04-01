@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>택시 도착 대기 중</title>
+    <link rel="stylesheet" href="/css/matched.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>택시 도착 대기 중</h1>
+    </header>
+    <main>
+        <div class="waiting-info">
+            <div class="car-animation">
+                <div class="car"></div>
+            </div>
+            <p>택시가 곧 도착합니다</p>
+            <p class="time">예상 도착 시간: <span id="arrival-time">5</span>분</p>
+        </div>
+        <div class="driver-info">
+            <h2>택시 정보</h2>
+            <p>차량 번호: <span id="car-number">서울 12가 3456</span></p>
+            <p>기사님 이름: <span id="driver-name">홍길동</span></p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 택시 앱 서비스. All rights reserved.</p>
+    </footer>
+</div>
+</body>
+</html>

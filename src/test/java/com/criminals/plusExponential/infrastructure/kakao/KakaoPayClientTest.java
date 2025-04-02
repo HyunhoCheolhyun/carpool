@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.concurrent.*;
 
 //@SpringBootTest
-class KakaoPayClientTest {
-
+//class KakaoPayClientTest {
+//
 //    @Autowired
 //    private DriverService driverService;
 //
@@ -67,5 +67,5 @@ class KakaoPayClientTest {
 //        Boolean result = kakaoPayClient.getApprove(paymentResponseDto.getTid(), pgToken);
 //        org.assertj.core.api.Assertions.assertThat(result).isEqualTo(true);
 //    }
-}
+//}
 

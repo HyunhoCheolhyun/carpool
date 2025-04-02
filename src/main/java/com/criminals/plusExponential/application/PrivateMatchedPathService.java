@@ -19,5 +19,9 @@ public class PrivateMatchedPathService {
 
     public void createPrivateMatchedPath(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
 
+        switch (matchedPath.getType()) {
+            case 0:
+                
+        }
     }
 }

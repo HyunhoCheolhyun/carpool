@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.concurrent.*;
 
-@SpringBootTest
-class KakaoPayClientTest {
-
+//@SpringBootTest
+//class KakaoPayClientTest {
+//
 //    @Autowired
 //    private DriverService driverService;
 //
@@ -67,5 +67,5 @@ class KakaoPayClientTest {
 //        Boolean result = kakaoPayClient.getApprove(paymentResponseDto.getTid(), pgToken);
 //        org.assertj.core.api.Assertions.assertThat(result).isEqualTo(true);
 //    }
-}
+//}
 

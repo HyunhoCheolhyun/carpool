@@ -4,12 +4,9 @@ import com.criminals.plusExponential.common.exception.customex.ThereIsNoUnmatche
 import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
-import com.criminals.plusExponential.infrastructure.persistence.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

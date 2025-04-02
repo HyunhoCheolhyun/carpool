@@ -13,9 +13,9 @@ import java.util.Set;
 
 
 
-//@SpringBootTest
-//class RedisMatchingRepositoryTest {
-//
+@SpringBootTest
+class RedisMatchingRepositoryTest {
+
 //    @Autowired
 //    private RedisMatchingRepository redisMatchingRepository;
 //
@@ -39,4 +39,4 @@ import java.util.Set;
 //    void cleanUp() {
 //        testUsers.forEach(redisMatchingRepository::removeUser);
 //    }
-//}
+}

@@ -1,4 +1,4 @@
-package com.criminals.plusExponential.infrastructure.redis;
+//package com.criminals.plusExponential.infrastructure.redis;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -13,9 +13,9 @@ import java.util.Set;
 
 
 
-@SpringBootTest
-class RedisMatchingRepositoryTest {
-
+//@SpringBootTest
+//class RedisMatchingRepositoryTest {
+//
 //    @Autowired
 //    private RedisMatchingRepository redisMatchingRepository;
 //
@@ -39,4 +39,4 @@ class RedisMatchingRepositoryTest {
 //    void cleanUp() {
 //        testUsers.forEach(redisMatchingRepository::removeUser);
 //    }
-}
+//}

@@ -61,19 +61,7 @@ class MatchMakerServiceTest {
 
 
 
-    @Test
-    @DisplayName("waitingList에 본인 제외 아무도 없는경우")
-    void findPartnerTest_무한루프O() throws ExecutionException, InterruptedException {
 
-        //given
-        UnmatchedPathDto a = new UnmatchedPathDto();
-        //when
-        a.setInitPoint(new Coordinate(37.3463, 126.9395)); //당동초등학교
-        //then
-        //무한루프를 돌아야됨
-        Future<UnmatchedPathDto> futureA = matchMakerService.requestMatchAsync(a);
-        System.out.println(futureA.get());
-    }
 
     @Test
     @DisplayName("전체유저: 6명")

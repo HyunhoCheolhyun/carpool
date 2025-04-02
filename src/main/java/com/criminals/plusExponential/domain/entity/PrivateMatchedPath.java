@@ -1,6 +1,7 @@
 package com.criminals.plusExponential.domain.entity;
 
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.domain.embeddable.Fare;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,7 +33,7 @@ public class PrivateMatchedPath {
     private Coordinate destinationPoint;
 
     @Column(nullable = false)
-    private int fare;
+    private Fare fare;
 
     @Column(nullable = false)
     private int duration;

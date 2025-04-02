@@ -39,17 +39,25 @@ public class PathService {
     public Summary getSummary(Coordinate point1, Coordinate point2) {
         Map<String, Object> routeData = km.getResponse(point1, point2);
 
-        Map<String, Integer> fareMap = (Map<String, Integer>) routeData.get("fare");
+        Map<String, Object> summaryData = (Map<String, Object>) routeData.get("summary");
 
-        Integer taxi = fareMap.get("taxi");
-        Integer toll = fareMap.get("toll");
-        Integer duration = (Integer) routeData.get("duration");
-        Integer distance = (Integer) routeData.get("distance");
+        Map<String, Integer> fareMap = (Map<String, Integer>) summaryData.get("fare");
 
+        Fare fare = new Fare(fareMap.get("taxi"), fareMap.get("toll"));
+
+
+        int duration = (Integer) summaryData.get("duration");
+        int distance = (Integer) summaryData.get("distance");
+        
         Summary summary = new Summary();
-        summary.fare = new Fare(taxi, toll);
+
+        summary.fare = fare;
         summary.duration = duration;
         summary.distance = distance;
+
+
+
+
         return summary;
 
 

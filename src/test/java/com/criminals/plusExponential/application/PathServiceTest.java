@@ -31,6 +31,8 @@ public class PathServiceTest {
 
         PathService.Summary summary = pathService.getSummary(a.getInitPoint(), b.getInitPoint(), a.getDestinationPoint(), b.getDestinationPoint());
 
-        System.out.println(summary);
+        pathService.getSummary(a.getInitPoint(), a.getDestinationPoint());
+
+
     }
 }

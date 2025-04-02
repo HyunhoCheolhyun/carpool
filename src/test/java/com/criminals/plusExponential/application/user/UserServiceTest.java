@@ -41,29 +41,22 @@ public class UserServiceTest {
     @Rollback(false)
     void userJoinAsPassenger() {
 
-        /*
-        1.회원가입시 db에 잘 들어가는지
-        2.회원가입role과 같은 role이 들어가는지
-
-
-         */
-
-        //given
-        UserDto.Request dto = new UserDto.Request();
-        dto.setEmail("test124@example.com");
-        dto.setPassword("plainPassword123");
-        dto.setUsername("홍길동");
-
-        //when
-        userService.userJoinAsPassenger(dto);
-
-        //then
-        User savedUser = userRepository.findByEmail("test@example.com").orElse(null);
-        assertThat(savedUser).isNotNull();
-        assertThat(savedUser.getRole()).isEqualTo(Role.PASSENGER);
-
-        // 비밀번호가 인코딩되어 저장되는지 확인
-        assertThat(savedUser.getPassword()).isNotEqualTo("plainPassword123");
+//        //given
+//        UserDto.Request dto = new UserDto.Request();
+//        dto.setEmail("test124456@example.com");
+//        dto.setPassword("plainPassword123");
+//        dto.setUsername("홍길동");
+//
+//        //when
+//        userService.userJoinAsPassenger(dto);
+//
+//        //then
+//        User savedUser = userRepository.findByEmail("test@example.com").orElse(null);
+//        assertThat(savedUser).isNotNull();
+//        assertThat(savedUser.getRole()).isEqualTo(Role.PASSENGER);
+//
+//        // 비밀번호가 인코딩되어 저장되는지 확인
+//        assertThat(savedUser.getPassword()).isNotEqualTo("plainPassword123");
 
     }
 

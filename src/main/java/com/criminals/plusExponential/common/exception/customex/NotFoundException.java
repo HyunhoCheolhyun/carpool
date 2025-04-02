@@ -5,4 +5,5 @@ public class NotFoundException extends OurServiceException{
     public NotFoundException(ErrorCode errorCode) {
         super(errorCode);
     }
+
 }

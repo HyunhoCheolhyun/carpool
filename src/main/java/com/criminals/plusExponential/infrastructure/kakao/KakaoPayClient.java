@@ -2,6 +2,9 @@ package com.criminals.plusExponential.infrastructure.kakao;
 import com.criminals.plusExponential.application.dto.kakao.ApproveRequestDto;
 import com.criminals.plusExponential.application.dto.kakao.PaymentRequestDto;
 import com.criminals.plusExponential.application.dto.kakao.PaymentResponseDto;
+import com.criminals.plusExponential.common.exception.customex.ApproveApiCallException;
+import com.criminals.plusExponential.common.exception.customex.ErrorCode;
+import com.criminals.plusExponential.common.exception.customex.PaymentApiCallException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -32,10 +35,7 @@ public class KakaoPayClient {
                 .retrieve() // 요청을 전송
                 .onStatus(HttpStatusCode::isError, response ->
                         response.bodyToMono(String.class)
-                                .flatMap(body -> {
-                                    log.error("getPayment Error: {}", body);
-                                    return Mono.error(new RuntimeException("Client error: " + body));
-                                }))// 예외처리
+                                .flatMap(body -> Mono.error(new PaymentApiCallException(ErrorCode.PaymentApiCallException ,body))))// 예외처리
                 .bodyToMono(PaymentResponseDto.class) // 응답값
                 .block();
     }
@@ -44,19 +44,19 @@ public class KakaoPayClient {
      * 결제 승인 (승인되면 true 반환)
      * @param tid
      * @param pgToken
-     * @return Boolean
+     * @return void
      */
-    public boolean getApprove(String tid, String pgToken){
-        //
-        return Boolean.TRUE.equals(WebClient.create(HOST + PAYMENT_APPROVE_URL)
+    public void getApprove(String tid, String pgToken){
+         WebClient.create(HOST + PAYMENT_APPROVE_URL)
                 .post()
                 .header("Authorization", "SECRET_KEY " + PAYMENT_SECRET_KEY)
                 .bodyValue(new ApproveRequestDto(tid, pgToken))
                 .retrieve()
+                 .onStatus(HttpStatusCode::isError, response ->
+                         response.bodyToMono(String.class)
+                                 .flatMap(body -> Mono.error(new ApproveApiCallException(ErrorCode.ApproveApiCallException ,body))))// 예외처리
                 .toBodilessEntity() // 응답 본문을 무시하고 상태 코드만 확인
-                .map(response -> true) // 성공적인 응답이면 true 반환
-                .block());
-
+                .block();
     }
 
 }

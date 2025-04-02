@@ -116,7 +116,7 @@ function showModal(data) {
     // 배차 수락
     document.getElementById("acceptButton").onclick = () => {
         modal.style.display = "none"; // 모달 닫기
-        handleAccept(data); // 수락 처리 함수 호출
+        handleAccept(data.id); // 수락 처리 함수 호출
     };
 
     // 배차 거절
@@ -124,8 +124,25 @@ function showModal(data) {
         modal.style.display = "none"; // 모달 닫기
     };
 
-    function handleAccept(data) {
-        console.log("수락된 데이터:", data);
+    async function handleAccept(matchedPathId) {
+        const baseUrl = window.location.origin + '/driver/accept/' + matchedPathId
+        console.log(baseUrl);
+
+        try {
+            const response = await fetch(baseUrl, {
+                method: "GET",
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.message.message);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            window.location.href = window.location.origin + '/matching-driver'
+        } catch (error) {
+            console.error("Error fetching directions:", error.message);
+        }
     }
 }
 

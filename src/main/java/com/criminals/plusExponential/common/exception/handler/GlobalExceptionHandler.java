@@ -1,10 +1,7 @@
 package com.criminals.plusExponential.common.exception.handler;
 
 import com.criminals.plusExponential.common.dto.ApiResponseFormat;
-import com.criminals.plusExponential.common.exception.customex.BadRequestException;
-import com.criminals.plusExponential.common.exception.customex.ErrorCode;
-import com.criminals.plusExponential.common.exception.customex.NotFoundException;
-import com.criminals.plusExponential.common.exception.customex.ValidException;
+import com.criminals.plusExponential.common.exception.customex.*;
 import com.criminals.plusExponential.common.exception.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -45,12 +42,28 @@ public class GlobalExceptionHandler {
                 .body(getErrorResponse(e.getErrorCode()));
     }
 
+
     @ExceptionHandler(ValidException.class)
     public ResponseEntity<ApiResponseFormat> handle(ValidException e) {
         logWarn(e);
         return ResponseEntity.status(httpStatus)
                 .body(getErrorResponseWithMessage(e.getErrorCode(), e.getMessage()));
     }
+
+    @ExceptionHandler({AlreadyMatchedException.class,PaymentTimeOutException.class,SocketDisconnectedException.class})
+    public ResponseEntity<ApiResponseFormat> handle(OurServiceException e) {
+        logWarn(e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(getErrorResponse(e.getErrorCode()));
+    }
+
+    @ExceptionHandler({ApproveApiCallException.class, PaymentApiCallException.class})
+    public ResponseEntity<ApiResponseFormat> handleMulti(OurServiceException e) {
+        logWarn(e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(getErrorResponseWithMessage(e.getErrorCode(),e.getErrorCode().getMessage()));
+    }
+
 
     private void logWarn(Exception e) {
         log.warn(LOG_FORMAT_WARN,

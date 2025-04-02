@@ -5,7 +5,7 @@ import com.criminals.plusExponential.application.user.UserService;
 import com.criminals.plusExponential.application.validator.UserValidators;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
-import com.criminals.plusExponential.infrastructure.socket.WebSocketService;
+import com.criminals.plusExponential.infrastructure.socket.WebSocketDriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class UserController {
 
     private final UserValidators.EmailValidator emailValidator;
 
-    private final WebSocketService webSocketService;
+    private final WebSocketDriverService webSocketDriverService;
 
     @InitBinder
     public void validatorBinder(WebDataBinder binder) {
@@ -59,7 +59,8 @@ public class UserController {
         MatchedPath matchedPath = new MatchedPath();
         matchedPath.setInitPoint(new Coordinate(37.2094, 126.9769)); //수원대학교
         matchedPath.setDestinationPoint(new Coordinate(37.3463, 126.9395)); //당동초등학교
+        matchedPath.setId(123L);
 
-        webSocketService.sendAllDriver(matchedPath,5);
+        webSocketDriverService.sendAllDriver(matchedPath,5);
     }
 }

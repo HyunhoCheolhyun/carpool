@@ -42,8 +42,8 @@ public class DriverService {
         PrivateMatchedPath matchedPathB = matchedPath.getPrivateMatchedPaths().get(0);
 
         // 결제 URL 요청, TID 저장
-        PaymentResponseDto paymentResponseA = kakaoPayClient.getPayment(matchedPathA.getFare());
-        PaymentResponseDto paymentResponseB = kakaoPayClient.getPayment(matchedPathB.getFare());
+        PaymentResponseDto paymentResponseA = kakaoPayClient.getPayment(matchedPathA.getFare().getTotal());
+        PaymentResponseDto paymentResponseB = kakaoPayClient.getPayment(matchedPathB.getFare().getTotal());
         tidMap.put(userA.getId(),paymentResponseA.getTid());
         tidMap.put(userB.getId(),paymentResponseB.getTid());
 

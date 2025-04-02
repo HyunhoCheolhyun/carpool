@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
-//@SpringBootTest
-//class MessageProducerTest {
+@SpringBootTest
+class MessageProducerTest {
 //    @Autowired
 //    private MessageProducer messageProducer;
 //
@@ -27,5 +27,5 @@ import static org.junit.jupiter.api.Assertions.*;
 //        messageProducer.sendMessage("error");
 //
 //    }
-//
-//}
+
+}

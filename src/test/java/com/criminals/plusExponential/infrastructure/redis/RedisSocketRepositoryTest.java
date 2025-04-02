@@ -9,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//@SpringBootTest
-//class RedisSocketRepositoryTest {
-//
+@SpringBootTest
+class RedisSocketRepositoryTest {
+
 //    @Autowired
 //    private RedisSocketRepository redisSocketRepository;
 //
@@ -33,6 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 //    void cleanUp(){
 //        redisSocketRepository.deleteSocketId(userId, Role.PASSENGER);
 //    }
-//
-//
-//}
+
+
+}

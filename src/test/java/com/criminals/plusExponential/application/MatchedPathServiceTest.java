@@ -9,12 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class MatchedPathServiceTest {
 
-    private final MatchMakerService matchMakerService;
+
     private final MatchedPathService matchedPathService;
 
     @Autowired
-    public MatchedPathServiceTest(MatchMakerService matchMakerService, MatchedPathService matchedPathService) {
-        this.matchMakerService = matchMakerService;
+    public MatchedPathServiceTest(MatchedPathService matchedPathService) {
         this.matchedPathService = matchedPathService;
     }
 

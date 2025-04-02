@@ -1,18 +1,18 @@
-//package com.criminals.plusExponential.infrastructure.kakao;
-//
-//import com.criminals.plusExponential.application.DriverService;
-//import com.criminals.plusExponential.application.dto.kakao.PaymentResponseDto;
-//import com.criminals.plusExponential.infrastructure.redis.RedisPgTokenRepository;
-//import org.aspectj.lang.annotation.After;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import java.util.concurrent.*;
-//
-//@SpringBootTest
-//class KakaoPayClientTest {
-//
+package com.criminals.plusExponential.infrastructure.kakao;
+
+import com.criminals.plusExponential.application.DriverService;
+import com.criminals.plusExponential.application.dto.kakao.PaymentResponseDto;
+import com.criminals.plusExponential.infrastructure.redis.RedisPgTokenRepository;
+import org.aspectj.lang.annotation.After;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import java.util.concurrent.*;
+
+@SpringBootTest
+class KakaoPayClientTest {
+
 //    @Autowired
 //    private DriverService driverService;
 //
@@ -67,5 +67,5 @@
 //        Boolean result = kakaoPayClient.getApprove(paymentResponseDto.getTid(), pgToken);
 //        org.assertj.core.api.Assertions.assertThat(result).isEqualTo(true);
 //    }
-//}
+}
 

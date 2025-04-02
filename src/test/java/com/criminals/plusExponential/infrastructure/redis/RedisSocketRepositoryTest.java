@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class RedisSocketRepositoryTest {
 
+
+
 //    @Autowired
 //    private RedisSocketRepository redisSocketRepository;
 //

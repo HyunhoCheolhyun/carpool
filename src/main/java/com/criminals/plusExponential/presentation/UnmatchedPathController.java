@@ -40,7 +40,6 @@ public class UnmatchedPathController {
     public ResponseEntity<?> sendMessageToMatchingProxy(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws ExecutionException, InterruptedException {
 
         User user = customUserDetails.getUser();
-        redisPgTokenRepository.deletePgToken(user.getId()); //PGTOKEN 초기화
         unmatchedPathService.sendMessageToMatchingProxy(user);
 
         return ResponseEntity.status(HttpStatus.OK).body("매칭 프록시에 책임 전달 완료");

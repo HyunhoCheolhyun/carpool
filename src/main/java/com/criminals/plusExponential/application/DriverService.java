@@ -9,11 +9,15 @@ import com.criminals.plusExponential.domain.entity.PrivateMatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.infrastructure.kakao.KakaoPayClient;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
+import com.criminals.plusExponential.infrastructure.redis.PgTokenMessage;
 import com.criminals.plusExponential.infrastructure.redis.RedisPgTokenRepository;
 import com.criminals.plusExponential.infrastructure.socket.WebSocketPassengerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RTopic;
+import org.redisson.api.RedissonClient;
+import org.redisson.api.listener.MessageListener;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -33,6 +39,7 @@ public class DriverService {
     private final RedisPgTokenRepository redisPgTokenRepository;
     private final KakaoPayClient kakaoPayClient;
     private final Set<Long> operatingSet = new HashSet<>();
+    private final RedissonClient redissonClient;
 
     /**
      * 택시기사 배차수락
@@ -49,7 +56,7 @@ public class DriverService {
         User userA = matchedPath.getPrivateMatchedPaths().get(0).getUser();
         User userB = matchedPath.getPrivateMatchedPaths().get(1).getUser();
         PrivateMatchedPath matchedPathA = matchedPath.getPrivateMatchedPaths().get(0);
-        PrivateMatchedPath matchedPathB = matchedPath.getPrivateMatchedPaths().get(0);
+        PrivateMatchedPath matchedPathB = matchedPath.getPrivateMatchedPaths().get(1);
 
         // 첫번째 배차만 매칭
         if(operatingSet.contains(matchedPathId)){
@@ -87,26 +94,44 @@ public class DriverService {
     }
 
 
+    /**
+     * 두 승객 모두 결제완료 될때까지 폴링
+     * @param userIdA
+     * @param userIdB
+     * @return
+     * @throws InterruptedException
+     */
     public PgTokens polling(Long userIdA, Long userIdB) throws InterruptedException {
-        String pgTokenA = null;
-        String pgTokenB = null;
-        long startTime = System.currentTimeMillis();
-        long timeout = 30000; // 30초 타임아웃
+        CompletableFuture<String> futureA = new CompletableFuture<>();
+        CompletableFuture<String> futureB = new CompletableFuture<>();
 
-        while (System.currentTimeMillis() - startTime < timeout) {
-            pgTokenA = redisPgTokenRepository.getPgToken(userIdA);
-            pgTokenB = redisPgTokenRepository.getPgToken(userIdB);
-            if (pgTokenA != null && pgTokenB!=null) {
-                break;
+        // Redis Pub/Sub 설정
+        RTopic topic = redissonClient.getTopic("payment-tokens");
+
+        // 승객이 결제완료되면 PGTOKEN을 Pub 해주고 아래 Listener가 받아서 처리
+        topic.addListener(PgTokenMessage.class, new MessageListener<PgTokenMessage>() {
+            @Override
+            public void onMessage(CharSequence channel, PgTokenMessage message) {
+                log.info("onMessage 진입:{}",message.getPgToken());
+                if (message.getUserId().equals(userIdA)) {
+                    futureA.complete(message.getPgToken());
+                } else if (message.getUserId().equals(userIdB)) {
+                    futureB.complete(message.getPgToken());
+                }
             }
-            Thread.sleep(1000);
-        }
+        });
 
-        if(pgTokenA == null || pgTokenB == null){
+        try {
+            // 30초안에 두 승객 모두 결제완료 되어야 정상처리
+            String pgTokenA = futureA.get(30, TimeUnit.SECONDS);
+            String pgTokenB = futureB.get(30, TimeUnit.SECONDS);
+
+            return new PgTokens(pgTokenA, pgTokenB);
+        } catch (Exception e) {
             throw new PaymentTimeOutException(ErrorCode.PaymentTimeOutException);
+        } finally {
+            topic.removeAllListeners();
         }
-
-        return new PgTokens(pgTokenA,pgTokenB);
     }
 
 

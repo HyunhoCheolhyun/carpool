@@ -30,7 +30,7 @@ public class PageController {
 
     @GetMapping("/matched")
     public String matched(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam(value = "pg_token") String pgToken) {
-        redisPgTokenRepository.setPgToken(customUserDetails.getUserId(),pgToken);
+        redisPgTokenRepository.publishPaymentToken(customUserDetails.getUserId(),pgToken);
         return "matched";
     }
 }

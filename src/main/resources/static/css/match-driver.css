@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.container {
+    max-width: 600px;
+    margin: 100px auto;
+    background-color: #e7e5e5;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 50px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 24px;
+    color: #0056b3;
+}
+
+.route-container {
+    position: relative;
+    padding-left: 30px;
+}
+
+.route-line {
+    position: absolute;
+    left: 15px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background-color: #0056b3;
+}
+
+.route-point {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.route-point:last-child {
+    margin-bottom: 0; /* 마지막 요소는 여백 제거 */
+}
+
+.point-circle {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #0056b3;
+    margin-right: 15px;
+}
+
+.point-label {
+    font-size: 16px;
+}

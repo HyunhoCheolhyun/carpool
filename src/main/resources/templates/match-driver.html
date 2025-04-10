@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>운행 경로 요약</title>
+  <link rel="stylesheet" th:href="@{/css/match-driver.css}">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>운행 경로 요약</h1>
+  </div>
+
+  <div class="route-container">
+    <!-- 수직선 -->
+    <div class="route-line"></div>
+
+    <!-- 출발지 -->
+    <div class="route-point">
+      <div class="point-circle"></div>
+      <div class="point-label" th:text="${departure}">출발지</div>
+    </div>
+
+    <!-- 제1 경유지 -->
+    <div class="route-point">
+      <div class="point-circle"></div>
+      <div class="point-label" th:text="${waypoint1}">제1 경유지</div>
+    </div>
+
+    <!-- 제2 경유지 -->
+    <div class="route-point">
+      <div class="point-circle"></div>
+      <div class="point-label" th:text="${waypoint2}">제2 경유지</div>
+    </div>
+
+    <!-- 목적지 -->
+    <div class="route-point">
+      <div class="point-circle"></div>
+      <div class="point-label" th:text="${destination}">목적지</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

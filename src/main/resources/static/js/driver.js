@@ -139,7 +139,7 @@ function showModal(data) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            window.location.href = window.location.origin + '/matching-driver'
+            window.location.href = window.location.origin + '/match-driver'+data.id
         } catch (error) {
             console.error("Error fetching directions:", error.message);
         }

@@ -51,7 +51,7 @@ public class DefaultSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/unmatchedPath").hasRole("PASSENGER")
+                        .requestMatchers("/unmatched-path").hasRole("PASSENGER")
                         .anyRequest().authenticated()
 
                 )

@@ -17,9 +17,9 @@ public enum ErrorCode {
     PaymentTimeOutException("결제대기시간을 초과 하였습니다."),
     SocketDisconnectedException("사용자와 연결이 끊겼습니다."),
     NotFoundException("해당 리소스를 찾을 수 없습니다."),
-    AlreadyMatchedException("이미 매칭되었습니다.")
-
-    ; //지우지 마셈
+    AlreadyMatchedException("이미 매칭되었습니다."),
+    FailCreateMathcedPath("경로를 다시 설정해 주세요")
+    ;
 
     private final String message;
 

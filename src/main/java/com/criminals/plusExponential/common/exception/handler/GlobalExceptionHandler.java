@@ -32,6 +32,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseFormat> handle(BadRequestException e) {
         logWarn(e);
         return ResponseEntity.status(httpStatus)
+                .body(getErrorResponseWithMessage(e.getErrorCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(FailCreateMathcedPath.class)
+    public ResponseEntity<ApiResponseFormat> handle(FailCreateMathcedPath e) {
+        logWarn(e);
+        return ResponseEntity.status(httpStatus)
                 .body(getErrorResponse(e.getErrorCode()));
     }
 

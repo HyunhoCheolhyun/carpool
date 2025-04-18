@@ -1,11 +1,10 @@
 package com.criminals.plusExponential.infrastructure.kakao;
-import com.criminals.plusExponential.common.exception.customex.ErrorCode;
-import com.criminals.plusExponential.common.exception.customex.LoadSearchFailException;
-import com.criminals.plusExponential.common.exception.customex.TooCloseBetweenInitAndDestination;
+import com.criminals.plusExponential.common.exception.customex.*;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -74,7 +73,8 @@ public class KakaoMobilityClient {
                 throw new RuntimeException("No routes found in the response.");
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch directions: " + e.getMessage(), e);
+
+            throw new FailCreateMathcedPath(ErrorCode.FailCreateMathcedPath,"Failed to fetch directions: " + e.getMessage());
         }
     }
 

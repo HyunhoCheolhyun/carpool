@@ -9,6 +9,12 @@ const socket = new SockJS('/ws-stomp');
 const stompClient = Stomp.over(socket);
 const container = document.getElementById('map');
 var map;
+var desMarker
+var originMarker
+let previousOriginInfo = null
+let previousDesInfo = null
+
+
 let unmatchedPathDto = {
     initPoint: {
         lat: null,
@@ -28,64 +34,52 @@ window.onload = function() {
 /**
  * 경로 설정
  */
-createRouteButton.addEventListener('click', function () {
+createRouteButton.addEventListener('click', async function () {
     createRouteButton.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
 
-    fetch('/unmatched-path', {
+    const response = await fetch('/unmatched-path', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(unmatchedPathDto)
     })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(response.message)
-            }
-            alert("✅ 경로 설정 완료")
-            return response
-        })
-        .then((data) => {
-            console.log(data)
-            buffering.style.display = "none"
-        })
-        .catch((error) => {
-            console.log(error)
-            alert(error)
-            matchingButton.disabled = false
-        })
+
+    if(!response.ok){
+        const data =  await response.json()
+        alert(data.message.message)
+    }
+    else{
+        alert("✅ 경로 설정 완료!")
+    }
 })
 
 /**
  * 매칭 하기
  */
-matchingButton.addEventListener('click', function () {
+matchingButton.addEventListener('click', async function () {
     matchingButton.disabled = true
     buffering.style.display = 'inline'
     matchingButton.style.backgroundColor = 'rgba(128, 128, 128, 0.5)'
 
-    fetch('/unmatched-path', {
+    const response = await fetch('/unmatched-path/init-matching', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(unmatchedPathDto)
+        }
     })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(response.message)
-            }
-            return response
-        })
-        .then((data) => {
-            console.log(data)
-            buffering.style.display = "none"
-        })
-        .catch((error) => {
-            console.log(error)
-            alert(error)
-            matchingButton.disabled = false
-        })
+
+    if(!response.ok){
+        const data =  await response.json()
+        alert(data.message.message)
+    }
+    else{
+        alert("✅ 매칭완료!")
+    }
+
+
+    buffering.style.display = "none"
+    matchingButton.disabled = false
 })
 
 
@@ -495,9 +489,10 @@ function initMap(){
             var message = '목적지'
 
             setDestinationPoint(latlng.getLat(),latlng.getLng())
+            displayMarker2(latlng,message)
 
-            destinationAddress.placeholder = '✅ 목적지 마커 설정 완료!'
-            destinationAddress.value = '✅ 목적지 마커 설정 완료!'
+            destinationAddress.placeholder = '✅ 목적지 설정 완료!'
+            destinationAddress.value = '✅ 목적지 설정 완료!'
 
             debounceTimer = setTimeout(() => {
                 isProcessing = false
@@ -512,11 +507,68 @@ function initMap(){
             var message = '출발지'
 
             setInitPoint(latlng.getLat(), latlng.getLng())
+            displayMarker(latlng,message)
 
-            originAddress.placeholder = '✅ 출발지 마커 설정 완료!'
-            originAddress.value = '✅ 출발지 마커 설정 완료!'
+            originAddress.placeholder = '✅ 출발지 설정 완료!'
+            originAddress.value = '✅ 출발지 설정 완료!'
         })
     });
+}
+
+function displayMarker(locPosition, message) {
+    if(originMarker){
+        originMarker.setMap(null)
+    }
+    if (previousOriginInfo) {
+        previousOriginInfo.close()
+    }
+
+    originMarker = new kakao.maps.Marker({
+        map: map,
+        position: locPosition,
+    })
+
+    var iwContent = message, // 인포윈도우에 표시할 내용
+        iwRemoveable = true
+
+    // 인포윈도우를 생성합니다
+    var infowindow = new kakao.maps.InfoWindow({
+        content: iwContent,
+        removable: iwRemoveable,
+    })
+
+    // 인포윈도우를 마커위에 표시합니다
+    infowindow.open(map, originMarker)
+
+    previousOriginInfo = infowindow
+}
+
+function displayMarker2(locPosition, message) {
+    if(desMarker){
+        desMarker.setMap(null)
+    }
+    if (previousDesInfo) {
+        previousDesInfo.close()
+    }
+
+    desMarker = new kakao.maps.Marker({
+        map: map,
+        position: locPosition,
+    })
+
+    var iwContent = message, // 인포윈도우에 표시할 내용
+        iwRemoveable = true
+
+    // 인포윈도우를 생성합니다
+    var infowindow = new kakao.maps.InfoWindow({
+        content: iwContent,
+        removable: iwRemoveable,
+    })
+
+    // 인포윈도우를 마커위에 표시합니다
+    infowindow.open(map, desMarker)
+
+    previousDesInfo = infowindow
 }
 
 

@@ -3,6 +3,7 @@ package com.criminals.plusExponential.application;
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.infrastructure.kakao.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,6 +15,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
+@Slf4j
 public class MatchMakerService extends PathService{
     private final List<UnmatchedPathDto> waitingList = new ArrayList<>();
     private final Map<UnmatchedPathDto, UnmatchedPathDto> matchingTable = new HashMap<>();

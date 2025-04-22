@@ -8,6 +8,7 @@ import com.criminals.plusExponential.infrastructure.kakao.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class MatchedPathService extends PathService{
 
     }
 
-    private void sendMessageToPrivateMatchedPath(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+    private void sendMessageToPrivateMatchedPath(@Valid MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
         privateMatchedPathService.createPrivateMatchedPath(matchedPath, newRequest, partner);
     }
 
@@ -80,11 +81,33 @@ public class MatchedPathService extends PathService{
                     matchedPath.setDistance(summary.distance);
                     matchedPath.setFare(summary.fare);
 
+                    switch (matchedPath.getType()) {
+                        case 0:
+                            matchedPath.setInitPoint(newRequest.getInitPoint());
+                            matchedPath.setFirstWayPoint(partner.getInitPoint());
+                            matchedPath.setSecondWayPoint(newRequest.getDestinationPoint());
+                            matchedPath.setDestinationPoint(partner.getDestinationPoint());
+                        case 1:
+                            matchedPath.setInitPoint(newRequest.getInitPoint());
+                            matchedPath.setFirstWayPoint(partner.getInitPoint());
+                            matchedPath.setSecondWayPoint(partner.getDestinationPoint());
+                            matchedPath.setDestinationPoint(newRequest.getDestinationPoint());
+                        case 2:
+                            matchedPath.setInitPoint(partner.getInitPoint());
+                            matchedPath.setFirstWayPoint(newRequest.getInitPoint());
+                            matchedPath.setSecondWayPoint(partner.getDestinationPoint());
+                            matchedPath.setDestinationPoint(newRequest.getDestinationPoint());
+                        case 3:
+                            matchedPath.setInitPoint(partner.getInitPoint());
+                            matchedPath.setFirstWayPoint(newRequest.getInitPoint());
+                            matchedPath.setSecondWayPoint(newRequest.getDestinationPoint());
+                            matchedPath.setDestinationPoint(partner.getDestinationPoint());
+                    }
+
                     matchedPathRepository.save(matchedPath);
                     sendMessageToPrivateMatchedPath(matchedPath, newRequest, partner);
 
-                    //test
-                    System.out.println(matchedPath);
+
                     return;
 
                 }

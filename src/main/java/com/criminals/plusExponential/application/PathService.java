@@ -8,17 +8,23 @@ import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.infrastructure.kakao.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.config.security.CustomUserDetails;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 import java.util.Map;
 import java.util.Optional;
 
+@Component
 @RequiredArgsConstructor
 public class PathService {
 
     private final KakaoMobilityClient km;
     private final UnmatchedPathRepository unmatchedPathRepository;
+
+
 
     public class Summary {
         Fare fare;
@@ -62,6 +68,32 @@ public class PathService {
 
 
     }
+
+
+    public Summary getSummary(Coordinate point1, Coordinate point2, Coordinate point3) {
+        
+        Map<String, Object> routeData = km.getResponse(point1, point2, point3);
+
+        Map<String, Object> summary = (Map<String, Object>) routeData.get("summary");
+
+        Integer distance = (Integer) summary.get("distance");
+        Integer duration = (Integer) summary.get("duration");
+        Map<String, Integer> fare = (Map<String, Integer>) summary.get("fare");
+        Integer taxi = fare.get("taxi");
+        Integer toll = fare.get("toll");
+
+        Summary retSummary = new Summary();
+
+        retSummary.distance = distance;
+        retSummary.duration = duration;
+        retSummary.fare = new Fare(taxi, toll);
+
+
+        return retSummary;
+
+    }
+
+
 
 
 

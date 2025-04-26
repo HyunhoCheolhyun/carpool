@@ -2,12 +2,14 @@ package com.criminals.plusExponential.application;
 
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.domain.embeddable.Fare;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -17,7 +19,7 @@ public class PathServiceTest {
 
 
     @Autowired
-    public PathServiceTest(@Qualifier("matchMakerService") PathService pathService) {
+    public PathServiceTest(@Qualifier("pathService") PathService pathService) {
         this.pathService = pathService;
     }
 
@@ -37,5 +39,33 @@ public class PathServiceTest {
         pathService.getSummary(a.getInitPoint(), a.getDestinationPoint());
 
 
+    }
+
+    @Test
+    @DisplayName("getSummary - 출발지, 경유지1, 도착지 3개 지점 요청 테스트")
+    void getSummary_withThreePoints() {
+        // given (테스트용 좌표 입력)
+        Coordinate start = new Coordinate(37.3461, 126.9398); // 예: 당동초등학교
+        Coordinate waypoint = new Coordinate(37.3471, 126.9528); // 예: 한세대학교
+        Coordinate end = new Coordinate(37.2092, 126.9772); // 예: 수원대학교
+
+        // when
+        PathService.Summary summary = pathService.getSummary(start, waypoint, end);
+
+        // then
+        assertThat(summary).isNotNull();
+        assertThat(summary.distance).isNotNull();
+        assertThat(summary.duration).isNotNull();
+        assertThat(summary.fare).isNotNull();
+
+        Fare fare = summary.fare;
+        assertThat(fare.getTaxi()).isNotNull();
+        assertThat(fare.getToll()).isNotNull();
+
+        // 출력 (확인용)
+        System.out.println("Distance: " + summary.distance);
+        System.out.println("Duration: " + summary.duration);
+        System.out.println("Taxi fare: " + fare.getTaxi());
+        System.out.println("Toll fare: " + fare.getToll());
     }
 }

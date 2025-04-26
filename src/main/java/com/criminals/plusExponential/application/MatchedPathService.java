@@ -62,7 +62,7 @@ public class MatchedPathService extends PathService{
 
     }
 
-    private void sendMessageToPrivateMatchedPath(@Valid MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+    private void sendMessageToPrivateMatchedPath(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
         privateMatchedPathService.createPrivateMatchedPath(matchedPath, newRequest, partner);
     }
 

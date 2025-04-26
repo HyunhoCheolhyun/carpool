@@ -22,40 +22,40 @@ public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPat
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull //이 클래스에서 해당 애너테이션은 matchedPath create 이후 privateMatchedPath 에 mathchedPath를 인자로 넘겨줄때 @Valid를 통해 해당 필드가 null이 아닌지 체크하기 위함
+
     @Embedded
     @Column(nullable = false)
     private Coordinate initPoint;
 
-    @NotNull
+
     @Embedded
     @Column(nullable = false)
     private Coordinate destinationPoint;
 
-    @NotNull
+
     @Embedded
     @Column(nullable = false)
     private Coordinate firstWayPoint;
 
-    @NotNull
+
     @Embedded
     @Column(nullable = false)
     private Coordinate secondWayPoint;
 
-    @NotNull
+
     @Embedded
     @Column(nullable = false)
     private Fare fare;
 
-    @NotNull
+
     @Column(nullable = false)
     private Integer distance;
 
-    @NotNull
+
     @Column(nullable = false)
     private Integer duration;
 
-    @NotNull
+
     @Column(nullable = false)
     private int type;
 

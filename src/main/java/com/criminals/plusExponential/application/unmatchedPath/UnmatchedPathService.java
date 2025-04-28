@@ -34,7 +34,7 @@ public class UnmatchedPathService extends PathService {
         unmatchedPathRepository.save(initFields(unmatchedPathDto, customUserDetails));
     }
 
-    public void sendMessageToMatchingProxy(User user) throws ExecutionException, InterruptedException {
+    public void sendMessageToMatchMakerService(User user) throws ExecutionException, InterruptedException {
 
         Optional<UnmatchedPath> existingOpt = unmatchedPathRepository.findByUser(user);
 
@@ -42,7 +42,7 @@ public class UnmatchedPathService extends PathService {
 
         UnmatchedPath unmatchedPath = existingOpt.get();
 
-        matchMakerService.initMatching(unmatchedPath.toDto());
+        matchMakerService.receiveAndSendMessage(unmatchedPath.toDto());
     }
 
 

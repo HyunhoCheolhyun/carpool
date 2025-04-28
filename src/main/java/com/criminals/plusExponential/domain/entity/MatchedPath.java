@@ -117,7 +117,7 @@ public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPat
                 ", distance=" + distance +
                 ", duration=" + duration +
                 ", type=" + type +
-                ", privateMatchedPaths=" + privateMatchedPaths +
+//                ", privateMatchedPaths=" + privateMatchedPaths +
                 '}';
     }
 }

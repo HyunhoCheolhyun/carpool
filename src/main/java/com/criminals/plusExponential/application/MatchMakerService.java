@@ -29,11 +29,16 @@ public class MatchMakerService extends PathService{
         this.matchedPathService = matchedPathService;
     }
 
-    public void initMatching(UnmatchedPathDto newRequest) throws ExecutionException, InterruptedException {
+    public void receiveAndSendMessage(UnmatchedPathDto newRequest) throws ExecutionException, InterruptedException {
+        UnmatchedPathDto partner = initMatching(newRequest);
+        matchedPathService.receiveMessage(newRequest, partner);
+    }
+
+    public UnmatchedPathDto initMatching(UnmatchedPathDto newRequest) throws ExecutionException, InterruptedException {
         Future<UnmatchedPathDto> unmatchedPathDtoFuture = requestMatchAsync(newRequest);
 
         UnmatchedPathDto partner = unmatchedPathDtoFuture.get();
-        matchedPathService.createMatchedPath(newRequest, partner);
+        return partner;
     }
 
 

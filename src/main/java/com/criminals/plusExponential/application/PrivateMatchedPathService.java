@@ -12,13 +12,22 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PrivateMatchedPathService {
 
-    private final PrivateMatchedPathRepository privateMatchedPathRepository;
     private final PathService pathService;
+
+    private final PrivateMatchedPathRepository privateMatchedPathRepository;
+
+    public void receiveMessage(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+        createPrivateMatchedPath(matchedPath, newRequest, partner);
+    }
 
     public void createPrivateMatchedPath(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
 
         PrivateMatchedPath aPrivateMatchedPath = new PrivateMatchedPath();
         PrivateMatchedPath bPrivateMatchedPath = new PrivateMatchedPath();
+
+        aPrivateMatchedPath.setFare(new Fare());
+        bPrivateMatchedPath.setFare(new Fare());
+
 
         setPrivateMatchedPathToll(matchedPath, newRequest, partner, aPrivateMatchedPath, bPrivateMatchedPath);
         setPrivateMatchedPathPoints(matchedPath, newRequest, partner, aPrivateMatchedPath, bPrivateMatchedPath);
@@ -26,7 +35,8 @@ public class PrivateMatchedPathService {
         setPrivateMatchedPathFareTaxi(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath);
         setPrivateMatchedPathDuration(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath);
 
-
+        privateMatchedPathRepository.save(aPrivateMatchedPath);
+        privateMatchedPathRepository.save(bPrivateMatchedPath);
     }
 
     private void setPrivateMatchedPathDuration(MatchedPath matchedPath, PrivateMatchedPath a, PrivateMatchedPath b) {
@@ -35,15 +45,19 @@ public class PrivateMatchedPathService {
             case 0:
                 a.setDuration(pathService.getSummary(matchedPath.getInitPoint(), matchedPath.getFirstWayPoint(), matchedPath.getSecondWayPoint()).duration);
                 b.setDuration(pathService.getSummary(matchedPath.getFirstWayPoint(), matchedPath.getSecondWayPoint(), matchedPath.getDestinationPoint()).duration);
+                break;
             case 1:
                 a.setDuration(matchedPath.getDuration());
                 b.setDuration(pathService.getSummary(matchedPath.getFirstWayPoint(), matchedPath.getSecondWayPoint()).duration);
+                break;
             case 2:
                 a.setDuration(pathService.getSummary(matchedPath.getFirstWayPoint(), matchedPath.getSecondWayPoint(), matchedPath.getDestinationPoint()).duration);
                 b.setDuration(pathService.getSummary(matchedPath.getInitPoint(), matchedPath.getFirstWayPoint(), matchedPath.getSecondWayPoint()).duration);
+                break;
             case 3:
                 a.setDuration(pathService.getSummary(matchedPath.getFirstWayPoint(), matchedPath.getSecondWayPoint()).duration);
                 b.setDuration(matchedPath.getDuration());
+                break;
         }
     }
 
@@ -82,7 +96,7 @@ public class PrivateMatchedPathService {
 
         int bTaxiFare = (totalTaxiFare * bSoloDistance / totalDistance) + (totalTaxiFare * coRideDistance / totalDistance / 2);
         Double rb = ((double) totalTaxiFare * (double) bSoloDistance / (double) totalDistance) + ((double) totalTaxiFare * (double) coRideDistance / (double) totalDistance / 2);
-        rb -= aTaxiFare;
+        rb -= bTaxiFare;
 
 
         if (aTaxiFare + bTaxiFare < totalTaxiFare) {
@@ -104,85 +118,62 @@ public class PrivateMatchedPathService {
 
 
 
-
-
-    private void setPrivateMatchedPathToll(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner, PrivateMatchedPath aPrivateMatchedPath, PrivateMatchedPath bPrivateMatchedPath) {
+    private void setPrivateMatchedPathToll(MatchedPath matchedPath, UnmatchedPathDto newReq, UnmatchedPathDto partner, PrivateMatchedPath a, PrivateMatchedPath b) {
         int matchedToll = matchedPath.getFare().getToll();
-
-        int aToll = newRequest.getFare().getToll();
+        int aToll = newReq.getFare().getToll();
         int bToll = partner.getFare().getToll();
 
-        if (matchedToll > 0) {
-            int unmatchedTollSum = aToll + bToll;
+        int unmatchedSum = aToll + bToll;
+        int delta = matchedToll - unmatchedSum;
 
-            if (matchedToll > unmatchedTollSum) {
-                int dToll = matchedToll - unmatchedTollSum;
-                aToll += (dToll / 2);
-                bToll += (dToll / 2);
-
-
-                setToll(aPrivateMatchedPath, aToll);
-                setToll(bPrivateMatchedPath, bToll);
-            } else if (matchedToll == unmatchedTollSum) {
-                setToll(aPrivateMatchedPath, aToll);
-                setToll(bPrivateMatchedPath, bToll);
-            } else if (matchedToll < unmatchedTollSum) {
-
-                int dToll = unmatchedTollSum - matchedToll;
-                aToll -= (dToll / 2);
-                bToll -= (dToll / 2);
-
-                setToll(aPrivateMatchedPath, aToll);
-                setToll(bPrivateMatchedPath, bToll);
-            }
-
-        } else {
-            setToll(aPrivateMatchedPath, aToll);
-            setToll(bPrivateMatchedPath, bToll);
+        if (delta > 0) {            // 합승 톨이 더 클 때 균등 분배 감소
+            aToll += delta / 2;
+            bToll += delta / 2;
+        } else if (delta < 0) {     // 합승 톨이 더 작을 때 균등 분배 증가
+            aToll += delta / 2;
+            bToll += delta / 2;
         }
+
+        a.getFare().setToll(aToll);
+        b.getFare().setToll(bToll);
     }
 
-    private void setToll(PrivateMatchedPath privateMatchedPath, int toll) {
-        Fare fare = privateMatchedPath.getFare();
-        fare.setToll(toll);
-        privateMatchedPath.setFare(fare);
-    }
 
-    private void setPrivateMatchedPathPoints(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner, PrivateMatchedPath a, PrivateMatchedPath b) {
 
-        a.setInitPoint(newRequest.getInitPoint());
+    private void setPrivateMatchedPathPoints(MatchedPath matchedPath,
+                                             UnmatchedPathDto newReq,
+                                             UnmatchedPathDto partner,
+                                             PrivateMatchedPath a,
+                                             PrivateMatchedPath b) {
+        a.setInitPoint(newReq.getInitPoint());
         b.setInitPoint(partner.getInitPoint());
+
         switch (matchedPath.getType()) {
-            //a출 b출 a도 b도
-            case 0:
+            case 0 -> {
                 a.setFirstWayPoint(partner.getInitPoint());
-                a.setDestinationPoint(newRequest.getDestinationPoint());
-
-                b.setFirstWayPoint(newRequest.getDestinationPoint());
+                a.setDestinationPoint(newReq.getDestinationPoint());
+                b.setFirstWayPoint(newReq.getDestinationPoint());
                 b.setDestinationPoint(partner.getDestinationPoint());
-            //a출 b출 b도 a도
-            case 1:
-
+            }
+            case 1 -> {
                 a.setFirstWayPoint(partner.getInitPoint());
                 a.setSecondWayPoint(partner.getDestinationPoint());
-                a.setDestinationPoint(newRequest.getDestinationPoint());
-
+                a.setDestinationPoint(newReq.getDestinationPoint());
                 b.setDestinationPoint(partner.getDestinationPoint());
-            // b출 a출 b도 a도
-            case 2:
+            }
+            case 2 -> {
                 a.setFirstWayPoint(partner.getDestinationPoint());
-                a.setDestinationPoint(newRequest.getDestinationPoint());
-
-                b.setFirstWayPoint(newRequest.getInitPoint());
+                a.setDestinationPoint(newReq.getDestinationPoint());
+                b.setFirstWayPoint(newReq.getInitPoint());
                 b.setDestinationPoint(partner.getDestinationPoint());
-            //b출 a출 a도 b도
-            case 3:
-                a.setDestinationPoint(newRequest.getDestinationPoint());
-
-                b.setFirstWayPoint(newRequest.getInitPoint());
-                b.setSecondWayPoint(newRequest.getDestinationPoint());
+            }
+            case 3 -> {
+                a.setDestinationPoint(newReq.getDestinationPoint());
+                b.setFirstWayPoint(newReq.getInitPoint());
+                b.setSecondWayPoint(newReq.getDestinationPoint());
                 b.setDestinationPoint(partner.getDestinationPoint());
-
+            }
+            default -> throw new IllegalArgumentException("unknown matchedPath type");
         }
     }
 }

@@ -24,7 +24,7 @@ public class PathServiceTest {
     }
 
     @Test
-    void test() {
+    void getSummary_with_FourPoints() {
         UnmatchedPathDto a = new UnmatchedPathDto();
         UnmatchedPathDto b = new UnmatchedPathDto();
 
@@ -68,4 +68,6 @@ public class PathServiceTest {
         System.out.println("Taxi fare: " + fare.getTaxi());
         System.out.println("Toll fare: " + fare.getToll());
     }
+
+
 }

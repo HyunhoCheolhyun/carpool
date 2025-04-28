@@ -25,11 +25,16 @@ public class UnmatchedPathServiceTest {
     UnmatchedPathRepository unmatchedPathRepository;
 
     @Test
-    void sendMessageToMatchingProxyExceptionTest() {
+    void createUnmatchedPath() {
+
+    }
+
+    @Test
+    void sendMessageToMatchingProxy() {
 
         UnmatchedPath unmatchedPath = new UnmatchedPath();
 
-        unmatchedPath.setId(100L);
+        unmatchedPath.setId(200L);
 
         User user = new User();
         user.setId(100L);

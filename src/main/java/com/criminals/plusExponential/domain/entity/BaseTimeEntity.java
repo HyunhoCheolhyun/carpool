@@ -16,22 +16,22 @@ public class BaseTimeEntity {
 
     @Column(name = "created_data_time", nullable = false)
     @CreatedDate
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDateTime;
 
     @Column(name = "modified_date_time", nullable = false)
     @LastModifiedDate
-    private LocalDateTime modifiedDate;
+    private LocalDateTime modifiedDateTime;
 
     /* 해당 엔티티를 저장하기 이전에 실행 */
     @PrePersist
     public void onPrePersist() {
-        this.createdDate = LocalDateTime.now();
-        this.modifiedDate = this.createdDate;
+        this.createdDateTime = LocalDateTime.now();
+        this.modifiedDateTime = this.createdDateTime;
     }
 
     /* 해당 엔티티를 업데이트 하기 이전에 실행*/
     @PreUpdate
     public void onPreUpdate() {
-        this.modifiedDate = LocalDateTime.now();
+        this.modifiedDateTime = LocalDateTime.now();
     }
 }

@@ -40,7 +40,7 @@ public class UnmatchedPathServiceTest {
         user.setId(100L);
 
         ThereIsNoUnmatchedPathException exception = Assertions.assertThrows(ThereIsNoUnmatchedPathException.class, () -> {
-            unmatchedPathService.sendMessageToMatchingProxy(user);
+            unmatchedPathService.sendMessageToMatchMakerService(user);
         });
     }
 

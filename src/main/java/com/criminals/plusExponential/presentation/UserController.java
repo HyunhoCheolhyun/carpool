@@ -54,13 +54,13 @@ public class UserController {
         userService.userJoinAsDriver(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 완료!");
     }
-    @GetMapping("/test")
-    public void test(){
-        MatchedPath matchedPath = new MatchedPath();
-        matchedPath.setInitPoint(new Coordinate(37.2094, 126.9769)); //수원대학교
-        matchedPath.setDestinationPoint(new Coordinate(37.3463, 126.9395)); //당동초등학교
-        matchedPath.setId(123L);
-
-        webSocketDriverService.sendAllDriver(matchedPath,5);
-    }
+//    @GetMapping("/test")
+//    public void test(){
+//        MatchedPath matchedPath = new MatchedPath(new Fare(0, 1200));
+//        matchedPath.setInitPoint(new Coordinate(37.2094, 126.9769)); //수원대학교
+//        matchedPath.setDestinationPoint(new Coordinate(37.3463, 126.9395)); //당동초등학교
+//        matchedPath.setId(123L);
+//
+//        webSocketDriverService.sendAllDriver(matchedPath,5);
+//    }
 }

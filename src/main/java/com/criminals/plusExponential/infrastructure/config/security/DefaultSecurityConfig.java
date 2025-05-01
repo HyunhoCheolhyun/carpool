@@ -50,12 +50,15 @@ public class DefaultSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/passenger", "/auth/driver").permitAll()
                         .requestMatchers("/unmatched-path").hasRole("PASSENGER")
                         .anyRequest().authenticated()
 
                 )
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(httpBasic -> httpBasic.disable());
+
+
+
 
 
         return http.build();

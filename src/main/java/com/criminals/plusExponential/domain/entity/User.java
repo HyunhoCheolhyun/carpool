@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "user")
 @Getter
@@ -38,5 +40,8 @@ public class User extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "user")
     private UnmatchedPath unmatchedPath;
+
+    @OneToMany(mappedBy = "user")
+    private List<PrivateMatchedPath> privateMatchedPaths;
 
 }

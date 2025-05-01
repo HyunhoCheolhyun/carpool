@@ -1,10 +1,13 @@
-package com.criminals.plusExponential.application;
+package com.criminals.plusExponential.application.privatematchedPath;
 
+import com.criminals.plusExponential.application.PathService;
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
+import com.criminals.plusExponential.domain.entity.PathStatus;
 import com.criminals.plusExponential.domain.entity.PrivateMatchedPath;
 import com.criminals.plusExponential.infrastructure.persistence.PrivateMatchedPathRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +23,21 @@ public class PrivateMatchedPathService {
         createPrivateMatchedPath(matchedPath, newRequest, partner);
     }
 
+    @Transactional
     public void createPrivateMatchedPath(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
 
+        PrivateMatchedPath[] privateMatchedPaths = initFields(matchedPath, newRequest, partner);
+        PrivateMatchedPath a = privateMatchedPaths[0];
+        PrivateMatchedPath b = privateMatchedPaths[1];
+
+        a.setStatus(PathStatus.ONGOING);
+        b.setStatus(PathStatus.ONGOING);
+
+        privateMatchedPathRepository.save(a);
+        privateMatchedPathRepository.save(b);
+    }
+
+    public PrivateMatchedPath[] initFields(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
         PrivateMatchedPath aPrivateMatchedPath = new PrivateMatchedPath();
         PrivateMatchedPath bPrivateMatchedPath = new PrivateMatchedPath();
 
@@ -35,8 +51,19 @@ public class PrivateMatchedPathService {
         setPrivateMatchedPathFareTaxi(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath);
         setPrivateMatchedPathDuration(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath);
 
-        privateMatchedPathRepository.save(aPrivateMatchedPath);
-        privateMatchedPathRepository.save(bPrivateMatchedPath);
+        aPrivateMatchedPath.setMatchedPath(matchedPath);
+        bPrivateMatchedPath.setMatchedPath(matchedPath);
+
+        aPrivateMatchedPath.setUser(newRequest.getUser());
+        bPrivateMatchedPath.setUser(partner.getUser());
+
+        PrivateMatchedPath[] result = new PrivateMatchedPath[2];
+
+        result[0] = aPrivateMatchedPath;
+        result[1] = bPrivateMatchedPath;
+
+        return result;
+
     }
 
     private void setPrivateMatchedPathDuration(MatchedPath matchedPath, PrivateMatchedPath a, PrivateMatchedPath b) {
@@ -118,7 +145,7 @@ public class PrivateMatchedPathService {
 
 
 
-    private void setPrivateMatchedPathToll(MatchedPath matchedPath, UnmatchedPathDto newReq, UnmatchedPathDto partner, PrivateMatchedPath a, PrivateMatchedPath b) {
+    public void setPrivateMatchedPathToll(MatchedPath matchedPath, UnmatchedPathDto newReq, UnmatchedPathDto partner, PrivateMatchedPath a, PrivateMatchedPath b) {
         int matchedToll = matchedPath.getFare().getToll();
         int aToll = newReq.getFare().getToll();
         int bToll = partner.getFare().getToll();

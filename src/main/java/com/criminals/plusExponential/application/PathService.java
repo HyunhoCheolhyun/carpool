@@ -27,9 +27,9 @@ public class PathService {
 
 
     public class Summary {
-        Fare fare;
-        int distance;
-        int duration;
+        public Fare fare;
+        public int distance;
+        public int duration;
 
         @Override
         public String toString() {

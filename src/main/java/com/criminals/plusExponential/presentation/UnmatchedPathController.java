@@ -26,7 +26,6 @@ public class UnmatchedPathController {
     private final RedisPgTokenRepository redisPgTokenRepository;
 
     /* 실제 서비스에서는 엔드유저가 출발지와 목적지를 지명 혹은 주소로 입력을 주었을 때 프론트단에서 사용하는 kakao map API에서 지명이나 주소를 좌표값으로 바꿔주면서 validation을 하기 때문에  여기에서는 따로 입력 좌표에 대한 validation을 하지 않음 */
-
     @PostMapping
     public ResponseEntity<?> createUnmatchedPath(@RequestBody UnmatchedPathDto unmatchedPathDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
@@ -35,6 +34,8 @@ public class UnmatchedPathController {
 
         return ResponseEntity.status(HttpStatus.OK).body("unmatchedPath is created!");
     }
+
+
 
     @PostMapping("/init-matching")
     public ResponseEntity<?> sendMessageToMatchingProxy(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws ExecutionException, InterruptedException {

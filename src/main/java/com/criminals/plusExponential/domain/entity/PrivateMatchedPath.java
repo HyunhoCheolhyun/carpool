@@ -10,7 +10,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class PrivateMatchedPath {
+public class PrivateMatchedPath extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +41,10 @@ public class PrivateMatchedPath {
     @Column(nullable = false)
     private int distance;
 
-    @OneToOne
+    @Enumerated
+    private PathStatus status;
+
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -49,4 +52,19 @@ public class PrivateMatchedPath {
     @JoinColumn(name = "matched_path_id")
     private MatchedPath matchedPath;
 
+    @Override
+    public String toString() {
+        return "PrivateMatchedPath{" +
+                "id=" + id +
+                ", initPoint=" + initPoint +
+                ", firstWayPoint=" + firstWayPoint +
+                ", secondWayPoint=" + secondWayPoint +
+                ", destinationPoint=" + destinationPoint +
+                ", fare=" + fare +
+                ", duration=" + duration +
+                ", distance=" + distance +
+                ", user=" + user +
+                ", matchedPath=" + matchedPath +
+                '}';
+    }
 }

@@ -1,6 +1,7 @@
 package com.criminals.plusExponential.application;
 
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
+import com.criminals.plusExponential.application.privatematchedPath.PrivateMatchedPathService;
 import com.criminals.plusExponential.common.exception.customex.DecideOrderError;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
@@ -8,7 +9,6 @@ import com.criminals.plusExponential.infrastructure.kakao.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -62,16 +62,14 @@ public class MatchedPathService extends PathService{
 
     }
 
-    public void receiveMessage(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
-        createMatchedPath(newRequest, partner);
-    }
-
-    private void sendMessageToPrivateMatchedPath(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+    public void receiveAndSendMessage(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+        MatchedPath matchedPath = createMatchedPath(newRequest, partner);
         privateMatchedPathService.receiveMessage(matchedPath, newRequest, partner);
     }
 
+
     @Transactional
-    public void createMatchedPath(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+    public MatchedPath createMatchedPath(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
 
         Map<Integer, Summary> typeMap = decideOrder(newRequest, partner);
 
@@ -108,11 +106,13 @@ public class MatchedPathService extends PathService{
                             matchedPath.setDestinationPoint(partner.getDestinationPoint());
                     }
 
+
+
                     matchedPathRepository.save(matchedPath);
-                    sendMessageToPrivateMatchedPath(matchedPath, newRequest, partner);
 
 
-                    return;
+
+                    return matchedPath;
 
                 }
 

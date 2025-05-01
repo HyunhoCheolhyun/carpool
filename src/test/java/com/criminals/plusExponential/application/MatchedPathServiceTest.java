@@ -1,7 +1,9 @@
 package com.criminals.plusExponential.application;
 
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
+import com.criminals.plusExponential.application.unmatchedPath.UnmatchedPathService;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
+import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.PrivateMatchedPathRepository;
@@ -24,12 +26,16 @@ public class MatchedPathServiceTest {
     private final MatchedPathRepository matchedPathRepository;
     private final PrivateMatchedPathRepository privateMatchedPathRepository;
 
+
     @Autowired
     public MatchedPathServiceTest(MatchedPathService matchedPathService, MatchedPathRepository matchedPathRepository, PrivateMatchedPathRepository privateMatchedPathRepository) {
         this.matchedPathService = matchedPathService;
         this.matchedPathRepository = matchedPathRepository;
         this.privateMatchedPathRepository = privateMatchedPathRepository;
     }
+
+
+
 
     @BeforeEach
     void cleanUp() {
@@ -47,8 +53,16 @@ public class MatchedPathServiceTest {
         a.setInitPoint(new Coordinate(37.3463, 126.9395)); //당동초등학교
         a.setDestinationPoint(new Coordinate(37.2094, 126.9769)); //수원대학교
 
+        a.setFare(new Fare(29360, 0));
+        a.setDuration(1380);
+        a.setDistance(22000);
+
         b.setInitPoint(new Coordinate(37.347, 126.9527)); //한세대학교
         b.setDestinationPoint(new Coordinate(37.2143, 126.9755)); //토마토 오피스텔2차
+
+        b.setDuration(1260);
+        b.setFare(new Fare(28890, 0));
+        b.setDistance(22000);
 
         matchedPathService.createMatchedPath(a, b);
 

@@ -5,6 +5,7 @@ import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

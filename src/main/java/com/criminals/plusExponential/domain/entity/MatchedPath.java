@@ -4,7 +4,6 @@ import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import com.criminals.plusExponential.domain.embeddable.Fare;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -52,6 +52,8 @@ public class PrivateMatchedPathService {
         setPrivateMatchedPathDistance(aPrivateMatchedPath, bPrivateMatchedPath);
         setPrivateMatchedPathFareTaxi(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath);
         setPrivateMatchedPathDuration(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath);
+
+
         setPrivateMatchedPathSavedAmount(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath, newRequest, partner);
 
         aPrivateMatchedPath.setMatchedPath(matchedPath);
@@ -71,8 +73,9 @@ public class PrivateMatchedPathService {
 
     private void setPrivateMatchedPathSavedAmount(MatchedPath matchedPath, PrivateMatchedPath a, PrivateMatchedPath b, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
 
-        int savedAmountA = a.getFare().getTotal() - newRequest.getFare().getToll();
-        int savedAmountB = b.getFare().getTotal() - partner.getFare().getToll();
+        int savedAmountA = (newRequest.getFare().getTaxi() + newRequest.getFare().getToll())  - ( a.getFare().getTaxi() + a.getFare().getToll());
+        int savedAmountB = (partner.getFare().getTaxi() + partner.getFare().getToll()) - (b.getFare().getTaxi() + b.getFare().getToll());
+
 
         a.setSavedAmount(savedAmountA);
         b.setSavedAmount(savedAmountB);

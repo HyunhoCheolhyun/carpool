@@ -10,7 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 public class Fare {
     int taxi;
     int toll;
@@ -21,6 +20,17 @@ public class Fare {
         this.toll = toll;
         this.total = taxi + toll;
     }
+
+    public void setTaxi(int taxi) {
+        this.taxi = taxi;
+        this.total = this.taxi + this.toll;
+    }
+
+    public void setToll(int toll) {
+        this.toll = toll;
+        this.total = this.taxi + this.toll;
+    }
+
 
     @Override
     public String toString() {

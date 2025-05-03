@@ -29,7 +29,7 @@ public class HistoryService {
 
         for (PrivateMatchedPath privateMatchedPath : privateMatchedPaths) {
             LocalDateTime createdAt = privateMatchedPath.getCreatedAt();
-            int price = privateMatchedPath.getFare().getTotal();
+            int price = privateMatchedPath.getFare().getTaxi() + privateMatchedPath.getFare().getToll();
             int savedAmount = privateMatchedPath.getSavedAmount();
             int duration = privateMatchedPath.getDuration();
             int distance = privateMatchedPath.getDistance();

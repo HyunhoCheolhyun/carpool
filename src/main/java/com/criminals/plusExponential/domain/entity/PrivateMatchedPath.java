@@ -35,7 +35,12 @@ public class PrivateMatchedPath {
     @Column(nullable = false)
     private Coordinate destinationPoint;
 
-    @Column(nullable = false)
+   @Embedded
+   @AttributeOverrides({
+           @AttributeOverride(name = "taxi",  column = @Column(name = "fare_taxi",  nullable = false)),
+           @AttributeOverride(name = "toll",  column = @Column(name = "fare_toll",  nullable = false)),
+           @AttributeOverride(name = "total", column = @Column(name = "fare_total", nullable = false))
+   })
     private Fare fare;
 
     @Column(nullable = false)

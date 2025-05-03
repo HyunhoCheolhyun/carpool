@@ -23,4 +23,15 @@ public class PassengerHistoryResponseDto{
         this.duration = duration;
         this.distance = distance;
     }
+
+    @Override
+    public String toString() {
+        return "PassengerHistoryResponseDto{" +
+                "date=" + date +
+                ", price=" + price +
+                ", savedAmount=" + savedAmount +
+                ", duration=" + duration +
+                ", distance=" + distance +
+                '}';
+    }
 }

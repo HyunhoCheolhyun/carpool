@@ -30,7 +30,11 @@ public class UnmatchedPath extends BaseTimeEntity {
 
 
     @Embedded
-    @Column
+    @AttributeOverrides({
+            @AttributeOverride(name = "taxi",  column = @Column(name = "fare_taxi",  nullable = false)),
+            @AttributeOverride(name = "toll",  column = @Column(name = "fare_toll",  nullable = false)),
+            @AttributeOverride(name = "total", column = @Column(name = "fare_total", nullable = false))
+    })
     private Fare fare;
 
     @Column

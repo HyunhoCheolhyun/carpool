@@ -41,7 +41,4 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user")
     private UnmatchedPath unmatchedPath;
 
-    @OneToMany(mappedBy = "user")
-    private List<PrivateMatchedPath> privateMatchedPaths;
-
 }

@@ -72,7 +72,7 @@ public class UserDto {
             this.username = user.getUsername();
             this.email = user.getEmail();
             this.role = user.getRole();
-            this.modifiedDate = user.getModifiedDate();
+            this.modifiedDate = user.getModifiedDate().toString();
         }
     }
 }

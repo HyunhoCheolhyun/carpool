@@ -7,10 +7,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
-public class PrivateMatchedPath extends BaseTimeEntity {
+public class PrivateMatchedPath {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,8 +44,16 @@ public class PrivateMatchedPath extends BaseTimeEntity {
     @Column(nullable = false)
     private int distance;
 
-    @Enumerated
-    private PathStatus status;
+    @Column(nullable = false)
+    private int savedAmount;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void onPrePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")

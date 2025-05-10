@@ -50,12 +50,15 @@ public class DefaultSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/passenger", "/auth/driver").permitAll()
+                        .requestMatchers("/login", "/auth/passenger").permitAll()
                         .requestMatchers("/unmatched-path").hasRole("PASSENGER")
                         .anyRequest().authenticated()
 
                 )
-                .httpBasic(httpBasic -> httpBasic.disable());
+                .formLogin(form -> form
+                        .loginProcessingUrl("/login")  // 위 컨트롤러 대신 스프링 기본 로그인 폼을 쓸 때
+                        .permitAll()
+                );
 
 
 

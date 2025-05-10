@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -14,24 +15,24 @@ import java.time.format.DateTimeFormatter;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseTimeEntity {
 
-    @Column(name = "created_data_time", nullable = false)
+    @Column(name = "created_data", nullable = false)
     @CreatedDate
-    private LocalDateTime createdDateTime;
+    private LocalDate createdDate;
 
-    @Column(name = "modified_date_time", nullable = false)
+    @Column(name = "modified_date", nullable = false)
     @LastModifiedDate
-    private LocalDateTime modifiedDateTime;
+    private LocalDate modifiedDate;
 
     /* 해당 엔티티를 저장하기 이전에 실행 */
     @PrePersist
     public void onPrePersist() {
-        this.createdDateTime = LocalDateTime.now();
-        this.modifiedDateTime = this.createdDateTime;
+        this.createdDate = LocalDate.now();
+        this.modifiedDate = this.createdDate;
     }
 
     /* 해당 엔티티를 업데이트 하기 이전에 실행*/
     @PreUpdate
     public void onPreUpdate() {
-        this.modifiedDateTime = LocalDateTime.now();
+        this.modifiedDate= LocalDate.now();
     }
 }

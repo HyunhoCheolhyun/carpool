@@ -4,7 +4,6 @@ import com.criminals.plusExponential.application.PathService;
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
-import com.criminals.plusExponential.domain.entity.PathStatus;
 import com.criminals.plusExponential.domain.entity.PrivateMatchedPath;
 import com.criminals.plusExponential.infrastructure.persistence.PrivateMatchedPathRepository;
 import jakarta.transaction.Transactional;
@@ -30,8 +29,11 @@ public class PrivateMatchedPathService {
         PrivateMatchedPath a = privateMatchedPaths[0];
         PrivateMatchedPath b = privateMatchedPaths[1];
 
-        a.setStatus(PathStatus.ONGOING);
-        b.setStatus(PathStatus.ONGOING);
+        a.setMatchedPath(matchedPath);
+        b.setMatchedPath(matchedPath);
+
+        matchedPath.getPrivateMatchedPaths().add(a);
+        matchedPath.getPrivateMatchedPaths().add(b);
 
         privateMatchedPathRepository.save(a);
         privateMatchedPathRepository.save(b);
@@ -51,6 +53,9 @@ public class PrivateMatchedPathService {
         setPrivateMatchedPathFareTaxi(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath);
         setPrivateMatchedPathDuration(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath);
 
+
+        setPrivateMatchedPathSavedAmount(matchedPath, aPrivateMatchedPath, bPrivateMatchedPath, newRequest, partner);
+
         aPrivateMatchedPath.setMatchedPath(matchedPath);
         bPrivateMatchedPath.setMatchedPath(matchedPath);
 
@@ -64,6 +69,16 @@ public class PrivateMatchedPathService {
 
         return result;
 
+    }
+
+    private void setPrivateMatchedPathSavedAmount(MatchedPath matchedPath, PrivateMatchedPath a, PrivateMatchedPath b, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
+
+        int savedAmountA = (newRequest.getFare().getTaxi() + newRequest.getFare().getToll())  - ( a.getFare().getTaxi() + a.getFare().getToll());
+        int savedAmountB = (partner.getFare().getTaxi() + partner.getFare().getToll()) - (b.getFare().getTaxi() + b.getFare().getToll());
+
+
+        a.setSavedAmount(savedAmountA);
+        b.setSavedAmount(savedAmountB);
     }
 
     private void setPrivateMatchedPathDuration(MatchedPath matchedPath, PrivateMatchedPath a, PrivateMatchedPath b) {

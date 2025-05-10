@@ -1,24 +1,15 @@
 package com.criminals.plusExponential.application.user;
 
 import com.criminals.plusExponential.application.dto.UserDto;
-import com.criminals.plusExponential.application.unmatchedPath.UnmatchedPathService;
 import com.criminals.plusExponential.domain.entity.Role;
-import com.criminals.plusExponential.domain.entity.UnmatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.UserRepository;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-public class UserServiceTest {
+public class AuthServiceTest {
 
     @Autowired
-    private UserService userService;
+    private AuthService authService;
 
     @Autowired
     private UserRepository userRepository;
@@ -73,7 +64,7 @@ public class UserServiceTest {
         dto.setUsername("길동홍");
 
         //when
-        userService.userJoinAsDriver(dto);
+        authService.userJoinAsDriver(dto);
 
 
         //then

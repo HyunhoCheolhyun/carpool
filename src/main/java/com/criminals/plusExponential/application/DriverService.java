@@ -9,6 +9,7 @@ import com.criminals.plusExponential.domain.entity.PrivateMatchedPath;
 import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.infrastructure.kakao.KakaoPayClient;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
+import com.criminals.plusExponential.infrastructure.persistence.PrivateMatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.redis.PgTokenMessage;
 import com.criminals.plusExponential.infrastructure.redis.RedisPgTokenRepository;
 import com.criminals.plusExponential.infrastructure.socket.WebSocketPassengerService;
@@ -40,6 +41,8 @@ public class DriverService {
     private final KakaoPayClient kakaoPayClient;
     private final Set<Long> operatingSet = new HashSet<>();
     private final RedissonClient redissonClient;
+
+    private final PrivateMatchedPathRepository privateMatchedPathRepository;
 
     /**
      * 택시기사 배차수락
@@ -85,6 +88,16 @@ public class DriverService {
             webSocketPassengerService.completePayment(userB.getId());
         }
         catch (RuntimeException e){
+
+            PrivateMatchedPath privateMatchedPathA = matchedPath.getPrivateMatchedPaths().get(0);
+            PrivateMatchedPath privateMatchedPathB = matchedPath.getPrivateMatchedPaths().get(1);
+
+            privateMatchedPathA.setUser(null);
+            privateMatchedPathB.setUser(null);
+
+            privateMatchedPathRepository.save(privateMatchedPathA);
+            privateMatchedPathRepository.save(privateMatchedPathB);
+
             operatingSet.remove(matchedPathId);
             log.error(e.getMessage());
             throw e;

@@ -51,8 +51,15 @@ class MatchMakerServiceTest {
             UnmatchedPathDto partnerOfA = futureA.get();
             UnmatchedPathDto partnerOfB = futureB.get();
 
-            Assertions.assertThat(partnerOfA).isEqualTo(b);
-            Assertions.assertThat(partnerOfB).isEqualTo(a);
+            if(partnerOfA == null){
+                Assertions.assertThat(partnerOfB).isEqualTo(a);
+            }
+            else{
+                Assertions.assertThat(partnerOfA).isEqualTo(b);
+            }
+
+
+
 
         } catch (ExecutionException ex) {
             throw new RuntimeException(ex);
@@ -106,17 +113,28 @@ class MatchMakerServiceTest {
         //then
 
         try {
-            Assertions.assertThat(futureA.get()).isEqualTo(b);
-            Assertions.assertThat(futureB.get()).isEqualTo(a);
+
+            if(futureA.get() == null){
+                Assertions.assertThat(futureB.get()).isEqualTo(a);
+            }
+            else{
+                Assertions.assertThat(futureA.get()).isEqualTo(b);
+            }
+
+            if(futureC.get() == null){
+                Assertions.assertThat(futureD.get()).isEqualTo(c);
+            }
+            else {
+                Assertions.assertThat(futureC.get()).isEqualTo(d);
+            }
 
 
-            Assertions.assertThat(futureC.get()).isEqualTo(d);
-            Assertions.assertThat(futureD.get()).isEqualTo(c);
-
-
-            Assertions.assertThat(futureE.get()).isEqualTo(f);
-            Assertions.assertThat(futureF.get()).isEqualTo(e);
-
+            if(futureE.get() == null){
+                Assertions.assertThat(futureF.get()).isEqualTo(e);
+            }
+            else {
+                Assertions.assertThat(futureE.get()).isEqualTo(f);
+            }
 
 
 

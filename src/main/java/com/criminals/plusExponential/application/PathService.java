@@ -11,6 +11,7 @@ import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRep
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Primary
 public class PathService {
 
     private final KakaoMobilityClient km;

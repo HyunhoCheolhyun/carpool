@@ -1,5 +1,6 @@
 package com.criminals.plusExponential.infrastructure.socket;
 
+import com.criminals.plusExponential.application.dto.MatchedPathDto;
 import com.criminals.plusExponential.application.dto.kakao.PaymentResponseDto;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
 import com.criminals.plusExponential.common.exception.customex.SocketDisconnectedException;
@@ -30,7 +31,7 @@ public class WebSocketPassengerService {
      * @param userId
      * @param matchedPath
      */
-    public void sendMatchingCompleted(Long userId, MatchedPath matchedPath) {
+    public void sendMatchingCompleted(Long userId, MatchedPathDto matchedPath) {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         String socketId = Optional.ofNullable(redisSocketRepository.getSocketId(userId))
                 .orElseThrow(() -> new SocketDisconnectedException(ErrorCode.SocketDisconnectedException));
@@ -42,7 +43,7 @@ public class WebSocketPassengerService {
         // 클라이언트에게 소켓 전송
         messagingTemplate.convertAndSendToUser(
                 socketId,
-                "/queue/messages",
+                "/queue/partner",
                 matchedPath,
                 headerAccessor.getMessageHeaders()
         );

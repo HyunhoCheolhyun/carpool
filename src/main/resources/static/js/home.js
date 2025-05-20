@@ -73,9 +73,6 @@ matchingButton.addEventListener('click', async function () {
         const data =  await response.json()
         alert(data.message.message)
     }
-    else{
-        alert("✅ 매칭완료!")
-    }
 
 
     buffering.style.display = "none"
@@ -423,8 +420,11 @@ function initSocket(){
         console.log('Connected: ' + frame);
         // 이 시점에서 서버의 handleSessionConnected 메소드가 실행됨
 
-        stompClient.subscribe('/user/queue/messages', function(message) {
-            console.log('Received: ' + message.body);
+        stompClient.subscribe('/user/queue/partner', function(message) {
+            console.log('matchedPath: ' + message.body);
+            alert("파트너 매칭완료! \n 택시가 매칭될 때까지 기다려주세요.")
+
+            buffering.style.display = 'inline'
         });
     });
 

@@ -1,40 +1,62 @@
 package com.criminals.plusExponential.application;
 
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
+import com.criminals.plusExponential.application.dto.UserDto;
+import com.criminals.plusExponential.application.privatematchedPath.PrivateMatchedPathService;
 import com.criminals.plusExponential.application.unmatchedPath.UnmatchedPathService;
+import com.criminals.plusExponential.application.user.AuthService;
 import com.criminals.plusExponential.domain.embeddable.Coordinate;
 import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
+import com.criminals.plusExponential.domain.entity.PrivateMatchedPath;
+import com.criminals.plusExponential.domain.entity.User;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.PrivateMatchedPathRepository;
+import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
+import com.criminals.plusExponential.infrastructure.persistence.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
 public class MatchedPathServiceTest {
 
-
-    private final MatchedPathService matchedPathService;
-    private final MatchedPathRepository matchedPathRepository;
-    private final PrivateMatchedPathRepository privateMatchedPathRepository;
-
+    @Autowired
+    private AuthService authService;
 
     @Autowired
-    public MatchedPathServiceTest(MatchedPathService matchedPathService, MatchedPathRepository matchedPathRepository, PrivateMatchedPathRepository privateMatchedPathRepository) {
-        this.matchedPathService = matchedPathService;
-        this.matchedPathRepository = matchedPathRepository;
-        this.privateMatchedPathRepository = privateMatchedPathRepository;
-    }
+    private MatchedPathService matchedPathService;
 
+    @Autowired
+    private MatchedPathRepository matchedPathRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UnmatchedPathRepository unmatchedPathRepository;
+
+    @Autowired
+    private PrivateMatchedPathService privateMatchedPathService;
+    @Autowired
+    private SavedRequestAwareAuthenticationSuccessHandler savedRequestAwareAuthenticationSuccessHandler;
+    @Autowired
+    private UnmatchedPathService unmatchedPathService;
+    @Autowired
+    private PrivateMatchedPathRepository privateMatchedPathRepository;
 
 
     @BeforeEach
@@ -45,6 +67,7 @@ public class MatchedPathServiceTest {
 
     @Test
     void matchedPathCreate() {
+
 
         //given
         UnmatchedPathDto a = new UnmatchedPathDto();
@@ -73,5 +96,49 @@ public class MatchedPathServiceTest {
 
         System.out.println(mp);
 
+    }
+
+
+    @Test
+    @Transactional
+    void privateMatchedPathCreate() {
+        // given
+        User userA = new User();
+        userA.setEmail("userA@example.com");
+        userA.setPassword("password01!");
+        userA.setUsername("userA");
+
+        User userB = new User();
+        userB.setEmail("userB@example.com");
+        userB.setPassword("password01!");
+        userB.setUsername("userB");
+
+        userRepository.save(userA);
+        userRepository.save(userB);
+
+        UnmatchedPathDto a = new UnmatchedPathDto();
+        UnmatchedPathDto b = new UnmatchedPathDto();
+
+        a.setInitPoint(new Coordinate(37.21386591854519, 126.97555253354011)); //토마토 오피스텔
+        a.setDestinationPoint(new Coordinate(37.50838483648765, 127.06134101282959)); // 삼성역
+
+        b.setInitPoint(new Coordinate(37.21416391831323, 126.97895481702412)); // 수원대 정문
+        b.setDestinationPoint(new Coordinate(37.49875173484248, 127.029821236394)); // 강남역
+
+        unmatchedPathRepository.save(unmatchedPathService.initFields(a, userA));
+        unmatchedPathRepository.save(unmatchedPathService.initFields(b, userB));
+
+
+        MatchedPath matchedPath = matchedPathService.createMatchedPath(a, b);
+
+        privateMatchedPathService.createPrivateMatchedPath(matchedPath, a, b);
+
+        MatchedPath savedMatchedPath = matchedPathRepository.findById(matchedPath.getId()).get();
+
+        Assertions.assertThat(savedMatchedPath.getPrivateMatchedPaths().get(0).getFare().getTotal())
+                .isGreaterThan(0);
+
+        Assertions.assertThat(savedMatchedPath.getPrivateMatchedPaths().get(1).getFare().getTotal())
+                .isGreaterThan(0);
     }
 }

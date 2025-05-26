@@ -1,8 +1,23 @@
 const socket = new SockJS('/ws-stomp');
 const stompClient = Stomp.over(socket);
+let intervalId;
+
 stompClient.connect({}, function(frame) {
     console.log('Connected: ' + frame);
     // 이 시점에서 서버의 handleSessionConnected 메소드가 실행됨
+
+    /**
+     * 서버에 반복적으로 택시기사 위치 전송
+     */
+    intervalId = setInterval(async () => {
+        const pos = await getCurrentPosition();
+
+        stompClient.send("/app/location", {},
+            JSON.stringify(pos)
+        );
+    }, 7000);
+
+
 
     /**
      * 드라이버에게 배차 수락 여부
@@ -10,15 +25,9 @@ stompClient.connect({}, function(frame) {
     stompClient.subscribe('/user/queue/driver', async function(message) {
         const data = JSON.parse(message.body);
         const matchedPath = data.matchedPath;
-        const availableTime = data.availableTime * 60;
 
-        const currentPosition = await getCurrentPosition();
-        const duration = await getResponse({origin:convertToOriginString(currentPosition),destination:convertToOriginString(matchedPath.initPoint)});
+        showModal(matchedPath)
 
-        console.log(duration)
-        if(duration<availableTime){
-            showModal(matchedPath)
-        }
     });
 });
 
@@ -58,35 +67,35 @@ async function getCurrentPosition(){
     });
 }
 
-/**
- * 카카오 길찾기 API호출
- * @return 소요시간
- */
-const getResponse = async (params) => {
-    const baseUrl = "https://apis-navi.kakaomobility.com/v1/directions";
-
-    const url = `${baseUrl}?origin=${params.origin}&destination=${params.destination}`;
-
-    try {
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Authorization": `KakaoAK ${REST_API_KEY}` // HTML에서 전달받은 API_KEY 사용
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const responseJson =await response.json();
-        console.log(responseJson)
-
-        return responseJson.routes[0].summary.duration;
-    } catch (error) {
-        console.error("Error fetching directions:", error.message);
-    }
-};
+// /**
+//  * 카카오 길찾기 API호출
+//  * @return 소요시간
+//  */
+// const getResponse = async (params) => {
+//     const baseUrl = "https://apis-navi.kakaomobility.com/v1/directions";
+//
+//     const url = `${baseUrl}?origin=${params.origin}&destination=${params.destination}`;
+//
+//     try {
+//         const response = await fetch(url, {
+//             method: "GET",
+//             headers: {
+//                 "Authorization": `KakaoAK ${REST_API_KEY}` // HTML에서 전달받은 API_KEY 사용
+//             }
+//         });
+//
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+//
+//         const responseJson =await response.json();
+//         console.log(responseJson)
+//
+//         return responseJson.routes[0].summary.duration;
+//     } catch (error) {
+//         console.error("Error fetching directions:", error.message);
+//     }
+// };
 
 function convertToOriginString(query) {
     if (!query.lat || !query.lng) {
@@ -139,7 +148,7 @@ function showModal(data) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            window.location.href = window.location.origin + '/match-driver'+data.id
+            window.location.href = window.location.origin + '/match-driver/'+data.id
         } catch (error) {
             console.error("Error fetching directions:", error.message);
         }

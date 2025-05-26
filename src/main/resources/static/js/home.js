@@ -426,6 +426,11 @@ function initSocket(){
 
             buffering.style.display = 'inline'
         });
+        stompClient.subscribe('/user/queue/payment', function(message) {
+            console.log('url: ' + message.body);
+
+            window.location.href = message.body;
+        });
     });
 
 // 에러 처리

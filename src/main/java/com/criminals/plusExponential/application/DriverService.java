@@ -1,4 +1,5 @@
 package com.criminals.plusExponential.application;
+
 import com.criminals.plusExponential.application.dto.kakao.PaymentResponseDto;
 import com.criminals.plusExponential.application.dto.kakao.PgTokens;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
@@ -55,29 +56,34 @@ public class DriverService {
     public ResponseEntity<Void> accept(Long matchedPathId) throws InterruptedException {
         // USER와 MATCHEDPATH 정보 조회
         MatchedPath matchedPath = matchedPathRepository.findUsersById(matchedPathId)
-                .orElseThrow(()-> new NotFoundException(ErrorCode.NotFoundException));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NotFoundException));
         User userA = matchedPath.getPrivateMatchedPaths().get(0).getUser();
         User userB = matchedPath.getPrivateMatchedPaths().get(1).getUser();
         PrivateMatchedPath matchedPathA = matchedPath.getPrivateMatchedPaths().get(0);
         PrivateMatchedPath matchedPathB = matchedPath.getPrivateMatchedPaths().get(1);
 
         // 첫번째 배차만 매칭
-        if(operatingSet.contains(matchedPathId)){
+        if (operatingSet.contains(matchedPathId)) {
             throw new DataIntegrityViolationException("이미 배차가 완료되었습니다.");
-        };
+        }
+        ;
         try {
             operatingSet.add(matchedPathId);
+
+            log.info("결제요청 전 {}", matchedPathA.getFare().getTotal());
+            log.info("결제요청 전 {}", matchedPathB.getFare().getTotal());
 
             // 결제 URL 요청
             PaymentResponseDto paymentResponseA = kakaoPayClient.getPayment(matchedPathA.getFare().getTotal());
             PaymentResponseDto paymentResponseB = kakaoPayClient.getPayment(matchedPathB.getFare().getTotal());
 
+
             //결제요청
-            webSocketPassengerService.sendPaymentURL(userA.getId(),paymentResponseA);
-            webSocketPassengerService.sendPaymentURL(userB.getId(),paymentResponseB);
+            webSocketPassengerService.sendPaymentURL(userA.getId(), paymentResponseA);
+            webSocketPassengerService.sendPaymentURL(userB.getId(), paymentResponseB);
 
             //결제 완료될때까지 폴링
-            PgTokens pgTokens = polling(userA.getId(),userB.getId());
+            PgTokens pgTokens = polling(userA.getId(), userB.getId());
 
             //결제승인
             kakaoPayClient.getApprove(paymentResponseA.getTid(), pgTokens.pgTokenA());
@@ -86,8 +92,7 @@ public class DriverService {
             //결제완료 알림
             webSocketPassengerService.completePayment(userA.getId());
             webSocketPassengerService.completePayment(userB.getId());
-        }
-        catch (RuntimeException e){
+        } catch (RuntimeException e) {
 
             PrivateMatchedPath privateMatchedPathA = matchedPath.getPrivateMatchedPaths().get(0);
             PrivateMatchedPath privateMatchedPathB = matchedPath.getPrivateMatchedPaths().get(1);
@@ -109,6 +114,7 @@ public class DriverService {
 
     /**
      * 두 승객 모두 결제완료 될때까지 폴링
+     *
      * @param userIdA
      * @param userIdB
      * @return
@@ -125,7 +131,7 @@ public class DriverService {
         topic.addListener(PgTokenMessage.class, new MessageListener<PgTokenMessage>() {
             @Override
             public void onMessage(CharSequence channel, PgTokenMessage message) {
-                log.info("onMessage 진입:{}",message.getPgToken());
+                log.info("onMessage 진입:{}", message.getPgToken());
                 if (message.getUserId().equals(userIdA)) {
                     futureA.complete(message.getPgToken());
                 } else if (message.getUserId().equals(userIdB)) {

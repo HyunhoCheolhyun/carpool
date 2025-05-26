@@ -1,7 +1,11 @@
 package com.criminals.plusExponential.infrastructure.socket;
 
+import com.criminals.plusExponential.application.dto.MatchedPathDto;
+import com.criminals.plusExponential.common.exception.customex.BadRequestException;
+import com.criminals.plusExponential.common.exception.customex.ErrorCode;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
 import com.criminals.plusExponential.domain.entity.Role;
+import com.criminals.plusExponential.infrastructure.redis.RedisLocationRepository;
 import com.criminals.plusExponential.infrastructure.redis.RedisSocketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,25 +23,30 @@ import java.util.Map;
 @Slf4j
 public class WebSocketDriverService {
     private final SimpMessagingTemplate messagingTemplate;
-    private final RedisSocketRepository redisSocketRepository;
+    private final RedisLocationRepository redisLocationRepository;
+
 
     /**
      * 배차 요청
+     *
      * @param matchedPath
      * @param availableTime
      */
-    
-    public void sendAllDriver(MatchedPath matchedPath, int availableTime){
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
-        headerAccessor.setLeaveMutable(true);
-        List<String> driverSocketIds = redisSocketRepository.getSocketIdsByRole(Role.DRIVER);
 
-        for(String socketId : driverSocketIds){
+    public void sendDriver(MatchedPath matchedPath, double availableTime) {
+        List<String> driverSocketIds = redisLocationRepository.findNearbyDrivers(matchedPath.getInitPoint(),availableTime);
+
+        if(driverSocketIds.isEmpty()){
+            throw new BadRequestException(ErrorCode.AlreadyMatchedException);
+        }
+
+        for (String socketId : driverSocketIds) {
+            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+            headerAccessor.setLeaveMutable(true);
             headerAccessor.setSessionId(socketId);
 
             Map<String, Object> payload = new HashMap<>();
-            payload.put("matchedPath", matchedPath);
-            payload.put("availableTime", availableTime);
+            payload.put("matchedPath", MatchedPathDto.from(matchedPath));
 
             // 택시기사들 모두에게 소켓 전송
             messagingTemplate.convertAndSendToUser(

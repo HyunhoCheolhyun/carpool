@@ -31,7 +31,7 @@ public class UnmatchedPathService extends PathService {
     @Transactional
     public void createUnmatchedPath(UnmatchedPathDto unmatchedPathDto, CustomUserDetails customUserDetails) {
 
-        unmatchedPathRepository.save(initFields(unmatchedPathDto, customUserDetails));
+        unmatchedPathRepository.save(initFields(unmatchedPathDto, customUserDetails.getUser()));
     }
 
     public void sendMessageToMatchMakerService(User user) throws ExecutionException, InterruptedException {

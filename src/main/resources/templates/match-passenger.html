@@ -10,20 +10,18 @@
 <body>
 <div class="container">
     <header>
-        <h1>택시 도착 대기 중</h1>
+        <h1>결제승인 대기 중</h1>
     </header>
     <main>
         <div class="waiting-info">
             <div class="car-animation">
                 <div class="car"></div>
             </div>
-            <p>택시가 곧 도착합니다</p>
-            <p class="time">예상 도착 시간: <span id="arrival-time">5</span>분</p>
+            <p>상대 결제 대기중</p>
         </div>
         <div class="driver-info">
             <h2>택시 정보</h2>
-            <p>차량 번호: <span id="car-number">서울 12가 3456</span></p>
-            <p>기사님 이름: <span id="driver-name">홍길동</span></p>
+            <p>기사님 이름: <span id="driver-name" th:text="${driverName}">홍길동</span></p>
         </div>
     </main>
     <footer>

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,4 +42,6 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user")
     private UnmatchedPath unmatchedPath;
 
+    @OneToMany(mappedBy = "driver")
+    List<MatchedPath> matchedPaths = new ArrayList<>();
 }

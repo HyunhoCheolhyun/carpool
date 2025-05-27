@@ -33,9 +33,17 @@ public class PageController {
     }
 
     // 결제완료 후 승객 화면
-    @GetMapping("/matched")
-    public String matched(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam(value = "pg_token") String pgToken) {
+    @GetMapping("/match-passenger/{matchedPathId}")
+    public String matched(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable("matchedPathId") Long matchedPathId, @RequestParam(value = "pg_token") String pgToken) {
         redisPgTokenRepository.publishPaymentToken(customUserDetails.getUserId(),pgToken);
+
+        MatchedPath matchedPath = matchedPathRepository.findById(matchedPathId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 경로가 존재하지 않습니다: " + matchedPathId));
+
+        System.out.println(matchedPath.getDriver().getUsername());
+        model.addAttribute("driverName", matchedPath.getDriver().getUsername());
+
+
         return "match-passenger";
     }
 

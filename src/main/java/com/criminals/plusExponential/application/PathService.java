@@ -11,6 +11,7 @@ import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRep
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 
@@ -19,11 +20,11 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Primary
 public class PathService {
 
     private final KakaoMobilityClient km;
     private final UnmatchedPathRepository unmatchedPathRepository;
-
 
 
     public class Summary {
@@ -54,14 +55,12 @@ public class PathService {
 
         int duration = (Integer) summaryData.get("duration");
         int distance = (Integer) summaryData.get("distance");
-        
+
         Summary summary = new Summary();
 
         summary.fare = fare;
         summary.duration = duration;
         summary.distance = distance;
-
-
 
 
         return summary;
@@ -71,7 +70,7 @@ public class PathService {
 
 
     public Summary getSummary(Coordinate point1, Coordinate point2, Coordinate point3) {
-        
+
         Map<String, Object> routeData = km.getResponse(point1, point2, point3);
 
         Map<String, Object> summary = (Map<String, Object>) routeData.get("summary");
@@ -94,11 +93,7 @@ public class PathService {
     }
 
 
-
-
-
     public Summary getSummary(Coordinate point1, Coordinate point2, Coordinate point3, Coordinate point4) {
-
 
 
         Map<String, Object> routeData = km.getResponse(point1, point2, point3, point4);
@@ -123,10 +118,7 @@ public class PathService {
     }
 
 
-
-
-
-    public UnmatchedPath initFields(UnmatchedPathDto unmatchedPathDto, CustomUserDetails customUserDetails) {
+    public UnmatchedPath initFields(UnmatchedPathDto unmatchedPathDto, User user) {
 
         Summary summary = getSummary(unmatchedPathDto.getInitPoint(), unmatchedPathDto.getDestinationPoint());
 
@@ -134,7 +126,6 @@ public class PathService {
         int duration = summary.duration;
         int distance = summary.distance;
 
-        User user = customUserDetails.getUser();
 
         Optional<UnmatchedPath> existingOpt = unmatchedPathRepository.findByUser(user);
 
@@ -160,10 +151,6 @@ public class PathService {
 
 
     }
-
-
-
-
 
 
 }

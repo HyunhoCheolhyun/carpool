@@ -1,5 +1,6 @@
 package com.criminals.plusExponential.application;
 
+import com.criminals.plusExponential.application.dto.MatchedPathDto;
 import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.application.privatematchedPath.PrivateMatchedPathService;
 import com.criminals.plusExponential.common.exception.customex.DecideOrderError;
@@ -8,6 +9,8 @@ import com.criminals.plusExponential.domain.entity.MatchedPath;
 import com.criminals.plusExponential.infrastructure.kakao.KakaoMobilityClient;
 import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.UnmatchedPathRepository;
+import com.criminals.plusExponential.infrastructure.socket.WebSocketDriverService;
+import com.criminals.plusExponential.infrastructure.socket.WebSocketPassengerService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -22,11 +25,15 @@ public class MatchedPathService extends PathService{
 
     private final MatchedPathRepository matchedPathRepository;
     private final PrivateMatchedPathService privateMatchedPathService;
+    private final WebSocketPassengerService webSocketPassengerService;
+    private final WebSocketDriverService webSocketDriverService;
 
-    public MatchedPathService(KakaoMobilityClient km, UnmatchedPathRepository unmatchedPathRepository, MatchedPathRepository matchedPathRepository, PrivateMatchedPathService privateMatchedPathService) {
+    public MatchedPathService(KakaoMobilityClient km, UnmatchedPathRepository unmatchedPathRepository, MatchedPathRepository matchedPathRepository, PrivateMatchedPathService privateMatchedPathService, WebSocketPassengerService webSocketPassengerService, WebSocketDriverService webSocketDriverService) {
         super(km, unmatchedPathRepository);
         this.matchedPathRepository = matchedPathRepository;
         this.privateMatchedPathService = privateMatchedPathService;
+        this.webSocketPassengerService = webSocketPassengerService;
+        this.webSocketDriverService = webSocketDriverService;
     }
 
     private Map<Integer, Summary> decideOrder(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
@@ -65,6 +72,10 @@ public class MatchedPathService extends PathService{
     public void receiveAndSendMessage(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
         MatchedPath matchedPath = createMatchedPath(newRequest, partner);
         privateMatchedPathService.receiveMessage(matchedPath, newRequest, partner);
+
+        webSocketDriverService.sendDriver(matchedPath,10L);
+        webSocketPassengerService.sendMatchingCompleted(newRequest.getUser().getId(), MatchedPathDto.from(matchedPath));
+        webSocketPassengerService.sendMatchingCompleted(partner.getUser().getId(), MatchedPathDto.from(matchedPath));
     }
 
 

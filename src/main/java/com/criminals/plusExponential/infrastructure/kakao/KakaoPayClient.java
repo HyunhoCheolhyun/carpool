@@ -27,11 +27,11 @@ public class KakaoPayClient {
      * @param fare
      * @return PaymentResponseDto
      */
-    public PaymentResponseDto getPayment(int fare){
+    public PaymentResponseDto getPayment(int fare, Long matchedPathId){
         return WebClient.create(HOST +PAYMENT_READY_URL)
                 .post()
                 .header("Authorization", "SECRET_KEY " + PAYMENT_SECRET_KEY)
-                .bodyValue(new PaymentRequestDto(fare))
+                .bodyValue(new PaymentRequestDto(fare, matchedPathId))
                 .retrieve() // 요청을 전송
                 .onStatus(HttpStatusCode::isError, response ->
                         response.bodyToMono(String.class)

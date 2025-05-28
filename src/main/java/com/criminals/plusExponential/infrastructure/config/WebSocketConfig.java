@@ -1,5 +1,4 @@
 package com.criminals.plusExponential.infrastructure.config;
-import com.criminals.plusExponential.infrastructure.redis.RedisMatchingRepository;
 import com.criminals.plusExponential.infrastructure.redis.RedisSocketRepository;
 import com.criminals.plusExponential.infrastructure.socket.WebSocketEventListener;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.web.socket.config.annotation.*;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {  // 하나의 인터페이스만 구현
 
     private final RedisSocketRepository redisSocketRepository;
-    private final RedisMatchingRepository redisMatchingRepository;
 
     @Bean
     public WebSocketEventListener webSocketEventListener() {

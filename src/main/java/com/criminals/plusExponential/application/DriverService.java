@@ -1,4 +1,5 @@
 package com.criminals.plusExponential.application;
+
 import com.criminals.plusExponential.application.dto.kakao.PaymentResponseDto;
 import com.criminals.plusExponential.application.dto.kakao.PgTokens;
 import com.criminals.plusExponential.common.exception.customex.ErrorCode;
@@ -37,47 +38,54 @@ import java.util.concurrent.TimeUnit;
 public class DriverService {
     private final MatchedPathRepository matchedPathRepository;
     private final WebSocketPassengerService webSocketPassengerService;
-    private final RedisPgTokenRepository redisPgTokenRepository;
     private final KakaoPayClient kakaoPayClient;
     private final Set<Long> operatingSet = new HashSet<>();
     private final RedissonClient redissonClient;
-
     private final PrivateMatchedPathRepository privateMatchedPathRepository;
 
     /**
      * 택시기사 배차수락
      * 1. 이미 배차됐는지 확인
-     * 2. 카카오페이결제 URL 받아오기
-     * 3. 승객들에게 URL전달
-     * 4. 결제완료될때까지 폴링
-     * 5. 택시기사에게 매칭완료 넘겨주기
+     * 2. matchedPath-driver 관계 저장
+     * 3. 카카오페이결제 URL 받아오기
+     * 4. 승객들에게 URL전달
+     * 5. 결제완료될때까지 폴링
+     * 6. 택시기사에게 매칭완료 넘겨주기
      */
-    public ResponseEntity<Void> accept(Long matchedPathId) throws InterruptedException {
+    public ResponseEntity<Void> accept(Long matchedPathId, User driver) throws InterruptedException {
         // USER와 MATCHEDPATH 정보 조회
         MatchedPath matchedPath = matchedPathRepository.findUsersById(matchedPathId)
-                .orElseThrow(()-> new NotFoundException(ErrorCode.NotFoundException));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NotFoundException));
         User userA = matchedPath.getPrivateMatchedPaths().get(0).getUser();
         User userB = matchedPath.getPrivateMatchedPaths().get(1).getUser();
         PrivateMatchedPath matchedPathA = matchedPath.getPrivateMatchedPaths().get(0);
         PrivateMatchedPath matchedPathB = matchedPath.getPrivateMatchedPaths().get(1);
 
         // 첫번째 배차만 매칭
-        if(operatingSet.contains(matchedPathId)){
+        if (operatingSet.contains(matchedPathId)) {
             throw new DataIntegrityViolationException("이미 배차가 완료되었습니다.");
-        };
+        }
+        ;
         try {
             operatingSet.add(matchedPathId);
 
+            matchedPath.setDriver(driver);
+            matchedPathRepository.save(matchedPath);
+
+            log.info("결제요청 전 {}", matchedPathA.getFare().getTotal());
+            log.info("결제요청 전 {}", matchedPathB.getFare().getTotal());
+
             // 결제 URL 요청
-            PaymentResponseDto paymentResponseA = kakaoPayClient.getPayment(matchedPathA.getFare().getTotal());
-            PaymentResponseDto paymentResponseB = kakaoPayClient.getPayment(matchedPathB.getFare().getTotal());
+            PaymentResponseDto paymentResponseA = kakaoPayClient.getPayment(matchedPathA.getFare().getTotal(), matchedPathId);
+            PaymentResponseDto paymentResponseB = kakaoPayClient.getPayment(matchedPathB.getFare().getTotal(), matchedPathId);
+
 
             //결제요청
-            webSocketPassengerService.sendPaymentURL(userA.getId(),paymentResponseA);
-            webSocketPassengerService.sendPaymentURL(userB.getId(),paymentResponseB);
+            webSocketPassengerService.sendPaymentURL(userA.getId(), paymentResponseA);
+            webSocketPassengerService.sendPaymentURL(userB.getId(), paymentResponseB);
 
             //결제 완료될때까지 폴링
-            PgTokens pgTokens = polling(userA.getId(),userB.getId());
+            PgTokens pgTokens = polling(userA.getId(), userB.getId());
 
             //결제승인
             kakaoPayClient.getApprove(paymentResponseA.getTid(), pgTokens.pgTokenA());
@@ -86,8 +94,7 @@ public class DriverService {
             //결제완료 알림
             webSocketPassengerService.completePayment(userA.getId());
             webSocketPassengerService.completePayment(userB.getId());
-        }
-        catch (RuntimeException e){
+        } catch (RuntimeException e) {
 
             PrivateMatchedPath privateMatchedPathA = matchedPath.getPrivateMatchedPaths().get(0);
             PrivateMatchedPath privateMatchedPathB = matchedPath.getPrivateMatchedPaths().get(1);
@@ -109,6 +116,7 @@ public class DriverService {
 
     /**
      * 두 승객 모두 결제완료 될때까지 폴링
+     *
      * @param userIdA
      * @param userIdB
      * @return
@@ -125,7 +133,7 @@ public class DriverService {
         topic.addListener(PgTokenMessage.class, new MessageListener<PgTokenMessage>() {
             @Override
             public void onMessage(CharSequence channel, PgTokenMessage message) {
-                log.info("onMessage 진입:{}",message.getPgToken());
+                log.info("onMessage 진입:{}", message.getPgToken());
                 if (message.getUserId().equals(userIdA)) {
                     futureA.complete(message.getPgToken());
                 } else if (message.getUserId().equals(userIdB)) {

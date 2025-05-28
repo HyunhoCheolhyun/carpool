@@ -31,6 +31,8 @@ public class MatchMakerService extends PathService{
 
     public void receiveAndSendMessage(UnmatchedPathDto newRequest) throws ExecutionException, InterruptedException {
         UnmatchedPathDto partner = initMatching(newRequest);
+        if(partner == null) return;
+
         matchedPathService.receiveAndSendMessage(newRequest, partner);
     }
 
@@ -59,7 +61,7 @@ public class MatchMakerService extends PathService{
         lock.lock();
 
         try {
-            if (matchingTable.containsKey(newRequest)) return matchingTable.get(newRequest);
+            if (matchingTable.containsKey(newRequest)) return null;
 
             while (true) {
                 List<UnmatchedPathDto> waitingListExceptMe = new ArrayList<>(waitingList);
@@ -70,7 +72,7 @@ public class MatchMakerService extends PathService{
                     //lock을 반납하고 sleep
                     partnerAvailable.await();
 
-                    if (matchingTable.containsKey(newRequest)) return matchingTable.get(newRequest);
+                    if (matchingTable.containsKey(newRequest)) return null;
                     continue;
                 }
 
@@ -96,6 +98,9 @@ public class MatchMakerService extends PathService{
                 }
 
                 if (partner != null) {
+                    if(matchingTable.containsKey(newRequest)) return null;
+                    if(matchingTable.containsKey(partner)) continue;
+
                     matchingTable.put(newRequest, partner);
                     matchingTable.put(partner, newRequest);
 
@@ -107,8 +112,7 @@ public class MatchMakerService extends PathService{
                     return partner;
                 } else {
                     partnerAvailable.await();
-
-                    if(matchingTable.containsKey(newRequest)) return matchingTable.get(newRequest);
+                    if(matchingTable.containsKey(newRequest)) return null;
                 }
 
             }

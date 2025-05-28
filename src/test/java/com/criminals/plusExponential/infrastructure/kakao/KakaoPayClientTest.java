@@ -10,31 +10,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.concurrent.*;
 
-//@SpringBootTest
-//class KakaoPayClientTest {
-//
-//    @Autowired
-//    private DriverService driverService;
-//
-//    @Autowired
-//    private KakaoPayClient kakaoPayClient;
-//
-//    @Autowired
-//    private RedisPgTokenRepository redisPgTokenRepository;
-//
+@SpringBootTest
+class KakaoPayClientTest {
+
+    @Autowired
+    private DriverService driverService;
+
+    @Autowired
+    private KakaoPayClient kakaoPayClient;
+
+    @Autowired
+    private RedisPgTokenRepository redisPgTokenRepository;
+
 //    @AfterEach
 //    void cleanUp(){
 //        redisPgTokenRepository.deletePgToken(1L);
 //    }
-//
-//
-//
-//    @Test
-//    void 결제URL요청(){
-//        PaymentResponseDto paymentResponseDto = kakaoPayClient.getPayment(1000);
-//        System.out.println(paymentResponseDto.toString());
-//    }
-//
+
+
+
+    @Test
+    void 결제URL요청(){
+        PaymentResponseDto paymentResponseDto = kakaoPayClient.getPayment(1000,72L);
+        System.out.println(paymentResponseDto.toString());
+    }
+
 //    @Test
 //    void 결제승인() throws InterruptedException, ExecutionException, TimeoutException {
 //        // 결제 URL 요청
@@ -67,5 +67,7 @@ import java.util.concurrent.*;
 //        Boolean result = kakaoPayClient.getApprove(paymentResponseDto.getTid(), pgToken);
 //        org.assertj.core.api.Assertions.assertThat(result).isEqualTo(true);
 //    }
-//}
+}
+
+
 

@@ -62,8 +62,14 @@ public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPat
     @Column(nullable = false)
     private int type;
 
-    @OneToMany(mappedBy = "matchedPath")
-    List<PrivateMatchedPath> privateMatchedPaths = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "matchedPath", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PrivateMatchedPath> privateMatchedPaths = new ArrayList<>();
+
+
 
     @Override
     public int compareTo(MatchedPath o) {

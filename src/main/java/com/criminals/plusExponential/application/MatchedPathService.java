@@ -32,9 +32,13 @@ public class MatchedPathService extends PathService{
     private Map<Integer, Summary> decideOrder(UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
         Map<Integer, Summary> retMap = new HashMap<>();
 
+        // a출 -> b출 -> a도 -> b도
         Summary summary0 = getSummary(newRequest.getInitPoint(), partner.getInitPoint(), newRequest.getDestinationPoint(), partner.getDestinationPoint());
+        // a출 -> b출 -> b도 -> a도
         Summary summary1 = getSummary(newRequest.getInitPoint(), partner.getInitPoint(), partner.getDestinationPoint(), newRequest.getDestinationPoint());
+        // b출 -> a출 -> b도 -> a도
         Summary summary2 = getSummary(partner.getInitPoint(), newRequest.getInitPoint(), partner.getDestinationPoint(), newRequest.getDestinationPoint());
+        // b출 -> a출 -> a도 -> b도
         Summary summary3 = getSummary(partner.getInitPoint(), newRequest.getInitPoint(), newRequest.getDestinationPoint(), partner.getDestinationPoint());
 
         retMap.put(0, summary0);
@@ -47,7 +51,7 @@ public class MatchedPathService extends PathService{
         for (int i = 0; i < 4; i++) {
 
             Summary currentSummary = retMap.get(i);
-            int currentFareSum = currentSummary.fare.getTotal();
+            int currentFareSum = currentSummary.fare.getToll() + currentSummary.fare.getTaxi();
 
             if (currentFareSum < min) {
                 min = currentFareSum;

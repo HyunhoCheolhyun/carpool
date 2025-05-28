@@ -5,6 +5,7 @@ import com.criminals.plusExponential.application.dto.UnmatchedPathDto;
 import com.criminals.plusExponential.domain.embeddable.Fare;
 import com.criminals.plusExponential.domain.entity.MatchedPath;
 import com.criminals.plusExponential.domain.entity.PrivateMatchedPath;
+import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.persistence.PrivateMatchedPathRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,15 @@ import org.springframework.stereotype.Service;
 public class PrivateMatchedPathService {
 
     private final PathService pathService;
-
     private final PrivateMatchedPathRepository privateMatchedPathRepository;
+    private final MatchedPathRepository matchedPathRepository;
+
+    //테스트용으로 붙인 어노테이션
 
     public void receiveMessage(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
         createPrivateMatchedPath(matchedPath, newRequest, partner);
+
+
     }
 
     @Transactional
@@ -35,8 +40,14 @@ public class PrivateMatchedPathService {
         matchedPath.getPrivateMatchedPaths().add(a);
         matchedPath.getPrivateMatchedPaths().add(b);
 
+
+        System.out.println("type = " + matchedPath.getType());
+        System.out.println("a출발지 : " + a.getInitPoint() + "a 1경유지: " +  a.getFirstWayPoint() + "a 2경유지: " +  a.getSecondWayPoint() + " a도착지: " + a.getDestinationPoint());
+        System.out.println("b출발지 : " + b.getInitPoint() + "b 1경유지: " +  b.getFirstWayPoint() + "b 2경유지: " +  b.getSecondWayPoint() + " b도착지: " + b.getDestinationPoint());
+
         privateMatchedPathRepository.save(a);
         privateMatchedPathRepository.save(b);
+
     }
 
     public PrivateMatchedPath[] initFields(MatchedPath matchedPath, UnmatchedPathDto newRequest, UnmatchedPathDto partner) {
@@ -111,15 +122,22 @@ public class PrivateMatchedPathService {
 
     private void setPrivateMatchedPathDistanceDetail(PrivateMatchedPath pm) {
         if (pm.getFirstWayPoint() == null) {
-            pm.setDistance(pathService.getSummary(pm.getInitPoint(), pm.getDestinationPoint()).distance);
+            pm.setDistance(
+                    pathService.getSummary(pm.getInitPoint(), pm.getDestinationPoint()).distance
+            );
+        } else if (pm.getSecondWayPoint() == null) {
+            int d1 = pathService.getSummary(pm.getInitPoint(), pm.getFirstWayPoint()).distance;
+            int d2 = pathService.getSummary(pm.getFirstWayPoint(), pm.getDestinationPoint()).distance;
+            pm.setDistance(d1 + d2);
         } else {
-            if (pm.getSecondWayPoint() == null) {
-                PathService.Summary summary1 = pathService.getSummary(pm.getInitPoint(), pm.getFirstWayPoint());
-                PathService.Summary summary2 = pathService.getSummary(pm.getFirstWayPoint(), pm.getDestinationPoint());
-                pm.setDistance(summary1.distance + summary2.distance);
-            } else {
-                pm.setDistance(pathService.getSummary(pm.getInitPoint(), pm.getFirstWayPoint(), pm.getSecondWayPoint(), pm.getDestinationPoint()).distance);
-            }
+            pm.setDistance(
+                    pathService.getSummary(
+                            pm.getInitPoint(),
+                            pm.getFirstWayPoint(),
+                            pm.getSecondWayPoint(),
+                            pm.getDestinationPoint()
+                    ).distance
+            );
         }
     }
 
@@ -128,17 +146,32 @@ public class PrivateMatchedPathService {
         int totalTaxiFare = matchedPath.getFare().getTaxi();
         int totalDistance = matchedPath.getDistance();
         int coRideDistance = pathService.getSummary(matchedPath.getFirstWayPoint(), matchedPath.getSecondWayPoint()).distance;
+        System.out.println("a distance = " + a.getDistance() );
+        System.out.println("b distance = " + b.getDistance());
+        System.out.println("coRideDistance = " + coRideDistance);
         int aSoloDistance = a.getDistance() - coRideDistance;
         int bSoloDistance = b.getDistance() - coRideDistance;
 
-        int aTaxiFare = (totalTaxiFare * aSoloDistance / totalDistance) + (totalTaxiFare * coRideDistance / totalDistance / 2);
+        long partASolo  = (long) totalTaxiFare * aSoloDistance   / totalDistance;
+        long partAShared = (long) totalTaxiFare * coRideDistance / totalDistance / 2;
+
+        int aTaxiFare = (int) (partASolo + partAShared);
         Double ra = ((double) totalTaxiFare * (double) aSoloDistance / (double) totalDistance) + ((double) totalTaxiFare * (double) coRideDistance / (double) totalDistance / 2);
         ra -= aTaxiFare;
 
 
-        int bTaxiFare = (totalTaxiFare * bSoloDistance / totalDistance) + (totalTaxiFare * coRideDistance / totalDistance / 2);
+        long partBSolo  = (long) totalTaxiFare * bSoloDistance  / totalDistance;
+        long partBShared = (long) totalTaxiFare * coRideDistance / totalDistance / 2;
+        int  bTaxiFare  = (int) (partBSolo + partBShared);
         Double rb = ((double) totalTaxiFare * (double) bSoloDistance / (double) totalDistance) + ((double) totalTaxiFare * (double) coRideDistance / (double) totalDistance / 2);
         rb -= bTaxiFare;
+
+        System.out.println("---------------------------------------");
+
+        System.out.println("totalDistance = " + totalDistance);
+        System.out.println("totalTaxiFare = " + totalTaxiFare);
+        System.out.println("a TaxiFare = " + aTaxiFare);
+        System.out.println("b TaxiFare = " + bTaxiFare);
 
 
         if (aTaxiFare + bTaxiFare < totalTaxiFare) {

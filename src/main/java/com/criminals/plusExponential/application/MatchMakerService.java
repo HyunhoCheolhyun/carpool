@@ -31,9 +31,14 @@ public class MatchMakerService extends PathService{
 
     public void receiveAndSendMessage(UnmatchedPathDto newRequest) throws ExecutionException, InterruptedException {
         UnmatchedPathDto partner = initMatching(newRequest);
-        if(partner == null) return;
 
-        matchedPathService.receiveAndSendMessage(newRequest, partner);
+
+        long requesterId = newRequest.getUser().getId();
+        long partnerId   = partner.getUser().getId();
+        if (requesterId < partnerId) {
+            matchedPathService.receiveAndSendMessage(newRequest, partner);
+        }
+
     }
 
     public UnmatchedPathDto initMatching(UnmatchedPathDto newRequest) throws ExecutionException, InterruptedException {

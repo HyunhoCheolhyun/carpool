@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>택시 도착 대기 중</title>
+    <link rel="stylesheet" href="/css/waiting.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.4-next/lib/stomp.min.js"></script>
+    <script type="text/javascript" src="/js/waiting.js" defer></script>
+
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>결제승인 대기 중</h1>
+    </header>
+    <main>
+        <div class="waiting-info">
+            <div class="car-animation">
+                <div class="car"></div>
+            </div>
+            <p>상대방 결제 대기중</p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 택시 앱 서비스. All rights reserved.</p>
+    </footer>
+</div>
+</body>
+</html>

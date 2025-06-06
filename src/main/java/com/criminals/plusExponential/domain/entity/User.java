@@ -42,10 +42,7 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user")
     private UnmatchedPath unmatchedPath;
 
-<<<<<<< HEAD
     @OneToMany(mappedBy = "driver")
     List<MatchedPath> matchedPaths = new ArrayList<>();
-=======
 
->>>>>>> d6cbd26 ([Fix] 1. 택시비용 음수값 문제 해결, 2. 파트너 매칭 이후에도 스레드가 두개 도는 문제해결)
 }

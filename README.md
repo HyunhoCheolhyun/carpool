@@ -13,8 +13,8 @@
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/baecheolhyeon"><img src="https://avatars.githubusercontent.com/u/87306418?v=4" width="100"/><br/>배철현</a></td>
-    <td align="center"><a href="https://github.com/HyunhoYu"><img src="https://avatars.githubusercontent.com/u/46563149?v=4" width="100"/><br/>유현호</a></td>
+    <td align="center"><a href="https://github.com/baecheolhyeon"><br/>배철현</a></td>
+    <td align="center"><a href="https://github.com/HyunhoYu"><br/>유현호</a></td>
   </tr>
 </table>
 

@@ -50,13 +50,21 @@ public class DefaultSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/auth/passenger").permitAll()
+                        .requestMatchers("/login", "/auth/passenger", "/signup", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/unmatched-path").hasRole("PASSENGER")
                         .anyRequest().authenticated()
 
                 )
                 .formLogin(form -> form
-                        .loginProcessingUrl("/login")  // 위 컨트롤러 대신 스프링 기본 로그인 폼을 쓸 때
+                        .loginPage("/login")
+                        .loginProcessingUrl("/api/login")
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
 
@@ -71,7 +79,7 @@ public class DefaultSecurityConfig {
     public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         customAuthenticationFilter.setFilterProcessesUrl("/auth/login");
-        customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler);
+//        customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler);
         customAuthenticationFilter.afterPropertiesSet();
         return customAuthenticationFilter;
     }

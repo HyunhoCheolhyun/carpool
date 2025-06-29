@@ -47,5 +47,8 @@ public class UnmatchedPathDto {
 
     }
 
+    // 
+    // 서버 - > REDIS // 메모리 조  (키  : 벨류)
+    // 서버 -> DB // 서버 디스크
 
 }

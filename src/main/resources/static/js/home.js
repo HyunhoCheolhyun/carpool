@@ -636,3 +636,18 @@ function handleButtonClick2(event,position) {
         setInitPoint(position.lat,position.lng)
     }
 }
+
+document.getElementById("logout").addEventListener("click", async () => {
+    try {
+        const response = await fetch("/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        });
+        // Spring Security는 로그아웃 후 리디렉트하므로, 여긴 잘 안 씀
+        window.location.href = "/login?logout"; // 수동으로 리디렉션
+    } catch (err) {
+        console.error("로그아웃 실패", err);
+    }
+});

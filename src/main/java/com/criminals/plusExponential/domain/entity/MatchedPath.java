@@ -69,8 +69,6 @@ public class MatchedPath extends BaseTimeEntity implements Comparable<MatchedPat
     @OneToMany(mappedBy = "matchedPath", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PrivateMatchedPath> privateMatchedPaths = new ArrayList<>();
 
-
-
     @ManyToOne
     @JoinColumn(name="driver_id")
     private User driver;

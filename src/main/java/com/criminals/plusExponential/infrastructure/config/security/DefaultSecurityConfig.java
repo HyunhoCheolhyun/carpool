@@ -54,10 +54,11 @@ public class DefaultSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/passenger").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/driver").permitAll()
                         .requestMatchers("/unmatched-path").hasRole("PASSENGER")
                         .requestMatchers("/html/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/user/signup").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/signup").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable());

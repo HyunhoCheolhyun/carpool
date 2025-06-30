@@ -5,8 +5,6 @@ import com.criminals.plusExponential.application.user.AuthService;
 import com.criminals.plusExponential.application.validator.UserValidators;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -33,9 +31,12 @@ public class AuthController {
 
 
     @PostMapping("/passenger")
-    public String joinProcPassenger(@Valid @ModelAttribute UserDto.Request dto, Errors errors, Model model) {
+    public String joinProcPassenger(@Valid @ModelAttribute("dto") UserDto.Request dto, Errors errors, Model model) {
         if (errors.hasErrors()) {
             Map<String, String> validatorResult = authService.validateHandling(errors);
+            for (Map.Entry<String, String> stringStringEntry : validatorResult.entrySet()) {
+                System.out.println(stringStringEntry.getKey() +": " + stringStringEntry.getValue());
+            }
             model.addAllAttributes(validatorResult);
             return "signup";
         }
@@ -45,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("/driver")
-    public String joinProcDriver(@Valid @RequestBody UserDto.Request dto, Errors errors, Model model) {
+    public String joinProcDriver(@Valid @ModelAttribute("dto") UserDto.Request dto, Errors errors, Model model) {
         if (errors.hasErrors()) {
             Map<String, String> validatorResult = authService.validateHandling(errors);
             model.addAllAttributes(validatorResult);
@@ -53,7 +54,7 @@ public class AuthController {
         }
 
         authService.userJoinAsDriver(dto);
-        return "home";
+        return "driver";
     }
 
 }

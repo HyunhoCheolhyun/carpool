@@ -24,6 +24,7 @@ public class AuthService {
     @Transactional
     public void userJoinAsPassenger(UserDto.Request dto) {
 
+        dto.setEmail(dto.getEmail().trim().toLowerCase());
         dto.setPassword(encoder.encode(dto.getPassword()));
         User user = dto.toEntity();
         user.setRole(Role.PASSENGER);
@@ -49,7 +50,7 @@ public class AuthService {
 
         Map<String, String> validatorResult = new HashMap<>();
         for (FieldError fieldError : errors.getFieldErrors()) {
-            String validKeyName = String.format("valid_%s,", fieldError.getField());
+            String validKeyName = String.format("valid_%s", fieldError.getField());
             validatorResult.put(validKeyName, fieldError.getDefaultMessage());
         }
 

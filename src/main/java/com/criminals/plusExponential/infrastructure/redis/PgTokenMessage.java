@@ -1,15 +1,13 @@
 package com.criminals.plusExponential.infrastructure.redis;
-
+import java.io.Serializable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class PgTokenMessage {
+@NoArgsConstructor
+@AllArgsConstructor
+public class PgTokenMessage implements Serializable {
     private Long userId;
     private String pgToken;
-
-    public PgTokenMessage(Long userId, String pgToken) {
-        this.userId = userId;
-        this.pgToken = pgToken;
-    }
 }

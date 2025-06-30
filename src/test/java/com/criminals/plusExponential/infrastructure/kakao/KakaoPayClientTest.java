@@ -31,7 +31,7 @@ class KakaoPayClientTest {
 
     @Test
     void 결제URL요청(){
-        PaymentResponseDto paymentResponseDto = kakaoPayClient.getPayment(1000,72L);
+        PaymentResponseDto paymentResponseDto = kakaoPayClient.getPayment(1000);
         System.out.println(paymentResponseDto.toString());
     }
 

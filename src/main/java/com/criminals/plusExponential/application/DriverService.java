@@ -13,6 +13,7 @@ import com.criminals.plusExponential.infrastructure.persistence.MatchedPathRepos
 import com.criminals.plusExponential.infrastructure.persistence.PrivateMatchedPathRepository;
 import com.criminals.plusExponential.infrastructure.redis.PgTokenMessage;
 import com.criminals.plusExponential.infrastructure.redis.RedisPgTokenRepository;
+import com.criminals.plusExponential.infrastructure.socket.WebSocketDriverService;
 import com.criminals.plusExponential.infrastructure.socket.WebSocketPassengerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.listener.MessageListener;
+import org.redisson.codec.JsonJacksonCodec;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 public class DriverService {
     private final MatchedPathRepository matchedPathRepository;
     private final WebSocketPassengerService webSocketPassengerService;
+    private final WebSocketDriverService webSocketDriverService;
     private final KakaoPayClient kakaoPayClient;
     private final Set<Long> operatingSet = new HashSet<>();
     private final RedissonClient redissonClient;
@@ -76,8 +79,8 @@ public class DriverService {
             log.info("결제요청 전 {}", matchedPathB.getFare().getTotal());
 
             // 결제 URL 요청
-            PaymentResponseDto paymentResponseA = kakaoPayClient.getPayment(matchedPathA.getFare().getTotal(), matchedPathId);
-            PaymentResponseDto paymentResponseB = kakaoPayClient.getPayment(matchedPathB.getFare().getTotal(), matchedPathId);
+            PaymentResponseDto paymentResponseA = kakaoPayClient.getPayment(matchedPathA.getFare().getTotal());
+            PaymentResponseDto paymentResponseB = kakaoPayClient.getPayment(matchedPathB.getFare().getTotal());
 
 
             //결제요청
@@ -92,8 +95,9 @@ public class DriverService {
             kakaoPayClient.getApprove(paymentResponseB.getTid(), pgTokens.pgTokenB());
 
             //결제완료 알림
-            webSocketPassengerService.completePayment(userA.getId());
-            webSocketPassengerService.completePayment(userB.getId());
+            webSocketPassengerService.completePayment(userA.getId(),matchedPathA.getId());
+            webSocketPassengerService.completePayment(userB.getId(),matchedPathB.getId());
+            webSocketDriverService.completePayment(driver.getId(),matchedPathId);
         } catch (RuntimeException e) {
 
             PrivateMatchedPath privateMatchedPathA = matchedPath.getPrivateMatchedPaths().get(0);
@@ -127,7 +131,7 @@ public class DriverService {
         CompletableFuture<String> futureB = new CompletableFuture<>();
 
         // Redis Pub/Sub 설정
-        RTopic topic = redissonClient.getTopic("payment-tokens");
+        RTopic topic = redissonClient.getTopic("payment-tokens", new JsonJacksonCodec());
 
         // 승객이 결제완료되면 PGTOKEN을 Pub 해주고 아래 Listener가 받아서 처리
         topic.addListener(PgTokenMessage.class, new MessageListener<PgTokenMessage>() {
@@ -143,9 +147,9 @@ public class DriverService {
         });
 
         try {
-            // 30초안에 두 승객 모두 결제완료 되어야 정상처리
-            String pgTokenA = futureA.get(30, TimeUnit.SECONDS);
-            String pgTokenB = futureB.get(30, TimeUnit.SECONDS);
+            // 60초안에 두 승객 모두 결제완료 되어야 정상처리
+            String pgTokenA = futureA.get(60, TimeUnit.SECONDS);
+            String pgTokenB = futureB.get(60, TimeUnit.SECONDS);
 
             return new PgTokens(pgTokenA, pgTokenB);
         } catch (Exception e) {

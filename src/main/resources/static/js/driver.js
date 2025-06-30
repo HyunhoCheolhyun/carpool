@@ -29,6 +29,15 @@ stompClient.connect({}, function(frame) {
         showModal(matchedPath)
 
     });
+
+    /**
+     * 승객 결제완료 후 이동
+     */
+    stompClient.subscribe('/user/queue/driver/payment-completion', function(message) {
+        console.log('matchedPath: ' + message.body);
+
+        window.location.href = window.location.origin + '/match-driver/' + message.body;
+    });
 });
 
 // 에러 처리
@@ -148,7 +157,7 @@ function showModal(data) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            window.location.href = window.location.origin + '/match-driver/'+data.id
+            // window.location.href = window.location.origin + '/match-driver/'+data.id
         } catch (error) {
             console.error("Error fetching directions:", error.message);
         }

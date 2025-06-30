@@ -4,6 +4,7 @@ import com.criminals.plusExponential.domain.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
+import org.redisson.codec.JsonJacksonCodec;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -15,8 +16,7 @@ public class RedisPgTokenRepository {
     private static final String ROLE_KEY_PREFIX = "PGTOKEN:";
 
     public void publishPaymentToken(Long userId, String pgToken) {
-
-        RTopic topic = redissonClient.getTopic("payment-tokens");
+        RTopic topic = redissonClient.getTopic("payment-tokens", new JsonJacksonCodec());
         PgTokenMessage message = new PgTokenMessage(userId, pgToken);
         topic.publish(message);
     }

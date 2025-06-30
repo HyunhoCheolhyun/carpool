@@ -53,7 +53,7 @@ public class WebSocketPassengerService {
     /**
      * 결제완료
      */
-    public void completePayment(Long userId){
+    public void completePayment(Long userId, Long pmId){
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         String socketId = Optional.ofNullable(redisSocketRepository.getSocketId(userId))
                 .orElseThrow(() -> new SocketDisconnectedException(ErrorCode.SocketDisconnectedException));
@@ -64,6 +64,7 @@ public class WebSocketPassengerService {
         messagingTemplate.convertAndSendToUser(
                 socketId,
                 "/queue/payment-completion",
+                pmId,
                 headerAccessor.getMessageHeaders()
         );
     }
@@ -82,7 +83,7 @@ public class WebSocketPassengerService {
         messagingTemplate.convertAndSendToUser(
                 socketId,
                 "/queue/payment",
-                paymentResponseDto,
+                paymentResponseDto.getNext_redirect_pc_url(),
                 headerAccessor.getMessageHeaders()
         );
     }

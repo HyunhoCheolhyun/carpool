@@ -3,6 +3,7 @@ package com.criminals.plusExponential.infrastructure.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -50,7 +52,9 @@ public class DefaultSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/auth/passenger", "/signup", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login", "/signup", "/html/**", "/css/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/passenger").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/driver").permitAll()
                         .requestMatchers("/unmatched-path").hasRole("PASSENGER")
                         .anyRequest().authenticated()
 
@@ -68,6 +72,10 @@ public class DefaultSecurityConfig {
                         .permitAll()
                 );
 
+        http.addFilterBefore(
+                customAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
+                UsernamePasswordAuthenticationFilter.class
+        );
 
 
 
@@ -79,7 +87,7 @@ public class DefaultSecurityConfig {
     public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
         customAuthenticationFilter.setFilterProcessesUrl("/auth/login");
-//        customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler);
+        customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler);
         customAuthenticationFilter.afterPropertiesSet();
         return customAuthenticationFilter;
     }

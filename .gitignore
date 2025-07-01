@@ -40,3 +40,7 @@ out/
 
 ### properties ###
 **/src/main/resources/properties/**
+
+###docker ####
+
+docker-compose.yml

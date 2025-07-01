@@ -18,7 +18,7 @@ public class UserValidators {
         private final UserRepository userRepository;
         @Override
         protected void doValidate(UserDto.Request dto, Errors errors) {
-            if (userRepository.existsByEmail(dto.toEntity().getEmail())) {
+            if (userRepository.existsByEmail(dto.toEntity().getEmail().trim().toLowerCase())) {
                 errors.rejectValue("email", "이메일 중복 오류", "이미 사용중인 이메일 입니다.");
             }
         }

@@ -52,21 +52,32 @@ public class DefaultSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login", "/signup", "/html/**", "/css/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/passenger").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/driver").permitAll()
                         .requestMatchers("/unmatched-path").hasRole("PASSENGER")
-                        .requestMatchers("/html/**").permitAll()
-                        .requestMatchers("/css/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user/signup").permitAll()
                         .anyRequest().authenticated()
+
                 )
-                .formLogin(form -> form.disable());
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/api/login")
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                );
 
         http.addFilterBefore(
                 customAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
                 UsernamePasswordAuthenticationFilter.class
         );
+
+
 
 
         return http.build();

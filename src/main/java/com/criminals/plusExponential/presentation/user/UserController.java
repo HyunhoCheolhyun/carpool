@@ -22,11 +22,6 @@ public class UserController {
 
     private final HistoryService historyService;
 
-    @GetMapping("/signup")
-    public String showSignupForm() {
-        return "signup";
-    }
-
     //RestController에서 Controller로 바뀜에 따라 아래 주석
 //    @GetMapping("/passenger/history")
 //    public ResponseEntity<List<PassengerHistoryResponseDto>> getHistories(@AuthenticationPrincipal CustomUserDetails customUserDetails) {

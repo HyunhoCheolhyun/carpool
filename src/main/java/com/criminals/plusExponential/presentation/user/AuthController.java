@@ -42,7 +42,7 @@ public class AuthController {
         }
 
         authService.userJoinAsPassenger(dto);
-        return "home";
+        return "redirect:/login?signup=true";
     }
 
     @PostMapping("/driver")
@@ -54,7 +54,7 @@ public class AuthController {
         }
 
         authService.userJoinAsDriver(dto);
-        return "driver";
+        return "redirect:/login?signup=true";
     }
 
 }

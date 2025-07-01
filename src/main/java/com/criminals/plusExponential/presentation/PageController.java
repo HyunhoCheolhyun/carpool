@@ -36,6 +36,16 @@ public class PageController {
         }
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/signup")
+    public String showSignupForm() {
+        return "signup";
+    }
+
     // 결제완료 후 승객 화면
     @GetMapping("/waiting")
     public String matched(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam(value = "pg_token") String pgToken) {

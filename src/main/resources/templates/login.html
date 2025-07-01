@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>택시 합승 시스템 로그인</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+<div class="login-container">
+    <h1 class="logo">🚕 택시합승시스템</h1>
+    <h2>로그인</h2>
+    <form id="login-form" action="/api/login" method="post">
+        <input type="text" name="username" placeholder="아이디" required>
+        <input type="password" name="password" placeholder="비밀번호" required>
+        <button type="submit">로그인</button>
+    </form>
+
+    <a href="/signup" class="signup-btn">회원가입</a>
+
+    <p th:if="${param.error}" class="message">아이디 또는 비밀번호가 잘못되었습니다.</p>
+    <p th:if="${param.logout}" class="message">로그아웃되었습니다.</p>
+    <p th:if="${param.signup}" class="message success">회원가입이 완료되었습니다. 로그인해 주세요.</p>
+</div>
+</body>
+</html>

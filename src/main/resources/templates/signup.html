@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원가입</title>
+  <link rel="stylesheet" href="/css/signup.css">
+</head>
+<body>
+<form id="signup-form" th:object="${dto}" method="post">
+  <!-- 이름 -->
+  <label for="username">이름</label><br>
+  <input type="text" id="username" name="username" required/><br><br>
+
+  <!-- 이메일 -->
+  <label for="email">이메일</label><br>
+  <input type="text" id="email" name="email" required/><br>
+  <p th:if="${valid_email}" th:text="${valid_email}" style="color:red;"></p>
+  <br>
+
+  <!-- 비밀번호 -->
+  <label for="password">비밀번호</label><br>
+  <input type="text" id="password" name="password" required/><br>
+  <p th:if="${valid_password}" th:text="${valid_password}" style="color:red;"></p>
+  <br>
+
+   버튼
+  <button id="button-as-passenger" type="button">승객으로 회원가입</button>
+  <button id="button-as-driver" type="button">드라이버로 회원가입</button>
+
+</form>
+
+<script th:inline="javascript">
+  const signupForm = document.getElementById("signup-form");
+  const buttonAsPassenger = document.getElementById("button-as-passenger");
+  const buttonAsDriver = document.getElementById("button-as-driver");
+
+  buttonAsPassenger.addEventListener("click", function () {
+    signupForm.setAttribute("action", /*[[@{/auth/passenger}]]*/"/auth/passenger");
+    signupForm.submit();
+  });
+
+  buttonAsDriver.addEventListener("click", function () {
+    signupForm.setAttribute("action", /*[[@{/auth/driver}]]*/"/auth/driver");
+    signupForm.submit();
+  });
+</script>
+
+</body>
+</html>

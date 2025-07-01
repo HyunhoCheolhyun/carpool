@@ -3,6 +3,7 @@ package com.criminals.plusExponential.infrastructure.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -50,18 +52,21 @@ public class DefaultSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/auth/passenger").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/passenger").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/driver").permitAll()
                         .requestMatchers("/unmatched-path").hasRole("PASSENGER")
+                        .requestMatchers("/html/**").permitAll()
+                        .requestMatchers("/css/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/signup").permitAll()
                         .anyRequest().authenticated()
-
                 )
-                .formLogin(form -> form
-                        .loginProcessingUrl("/login")  // 위 컨트롤러 대신 스프링 기본 로그인 폼을 쓸 때
-                        .permitAll()
-                );
+                .formLogin(form -> form.disable());
 
-
-
+        http.addFilterBefore(
+                customAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
+                UsernamePasswordAuthenticationFilter.class
+        );
 
 
         return http.build();

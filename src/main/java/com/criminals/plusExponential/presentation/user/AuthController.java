@@ -5,8 +5,8 @@ import com.criminals.plusExponential.application.user.AuthService;
 import com.criminals.plusExponential.application.validator.UserValidators;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@RestController
+@Controller
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -31,25 +31,30 @@ public class AuthController {
 
 
     @PostMapping("/passenger")
-    public ResponseEntity<?> joinProcPassenger(@Valid @RequestBody UserDto.Request dto, Errors errors) {
+    public String joinProcPassenger(@Valid @ModelAttribute("dto") UserDto.Request dto, Errors errors, Model model) {
         if (errors.hasErrors()) {
             Map<String, String> validatorResult = authService.validateHandling(errors);
-            return ResponseEntity.badRequest().body(validatorResult);
+            for (Map.Entry<String, String> stringStringEntry : validatorResult.entrySet()) {
+                System.out.println(stringStringEntry.getKey() +": " + stringStringEntry.getValue());
+            }
+            model.addAllAttributes(validatorResult);
+            return "signup";
         }
 
         authService.userJoinAsPassenger(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 완료!");
+        return "home";
     }
 
     @PostMapping("/driver")
-    public ResponseEntity<?> joinProcDriver(@Valid @RequestBody UserDto.Request dto, Errors errors) {
+    public String joinProcDriver(@Valid @ModelAttribute("dto") UserDto.Request dto, Errors errors, Model model) {
         if (errors.hasErrors()) {
             Map<String, String> validatorResult = authService.validateHandling(errors);
-            return ResponseEntity.badRequest().body(validatorResult);
+            model.addAllAttributes(validatorResult);
+            return "signup";
         }
 
         authService.userJoinAsDriver(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 완료!");
+        return "driver";
     }
 
 }

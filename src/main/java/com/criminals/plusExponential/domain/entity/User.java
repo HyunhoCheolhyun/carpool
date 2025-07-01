@@ -42,7 +42,12 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user")
     private UnmatchedPath unmatchedPath;
 
+
+
+    @OneToMany(mappedBy = "driver")
+
     @OneToMany(mappedBy = "driver")
     List<MatchedPath> matchedPaths = new ArrayList<>();
+
 
 }
